@@ -104,7 +104,10 @@ class BedtimeService : Service() {
             prefs.allDay -> getString(R.string.notification_waiting_allday)
             else -> getString(
                 R.string.notification_waiting,
-                String.format("%02d:%02d", prefs.windowEnd / 60, prefs.windowEnd % 60)
+                String.format(
+                    java.util.Locale.ROOT, "%02d:%02d",
+                    prefs.windowEnd / 60, prefs.windowEnd % 60
+                )
             )
         }
         val contentIntent = PendingIntent.getActivity(

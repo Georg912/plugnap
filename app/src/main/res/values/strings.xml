@@ -43,6 +43,17 @@
     <string name="status_waiting">Waiting for charger (%s).</string>
     <string name="status_anytime">any time</string>
 
+    <string name="help_master">While this is on, ZenDock watches for the charger during the night window: plug in → bedtime mode on, unplug → off.</string>
+    <string name="help_window">The charger only triggers the mode inside this window — plugging in during the day won\'t turn your screen gray. At the window\'s end the mode switches off even if the phone keeps charging.</string>
+    <string name="help_all_day">Ignore the window and react to the charger around the clock.</string>
+    <string name="help_grayscale">Removes all color from the screen. Scrolling loses its pull — the strongest nudge to put the phone down.</string>
+    <string name="help_ambient">Keeps the always-on display completely dark, so nothing glows on the nightstand.</string>
+    <string name="help_dim_wallpaper">Darkens the wallpaper while the mode is active.</string>
+    <string name="help_night_mode">Forces the dark theme. Android applies it the next time the screen turns off.</string>
+    <string name="help_filter">What may still disturb you: “Priority only” lets alarms, media and starred contacts through; “Alarms only” just alarms; “Total silence” nothing at all.</string>
+    <string name="about_title">How it works</string>
+    <string name="about_text">ZenDock registers its own mode in the system settings (Modes / Do Not Disturb) — you can fine-tune or toggle it manually there too.\n\nBattery: everything is event-driven. A small watcher runs only during the night window and just waits for charger events; there is no polling, plus two alarms per day for the window boundaries. The app has no internet access at all.</string>
+
     <string name="notification_channel">Bedtime watcher</string>
     <string name="notification_active">Bedtime mode active — unplug to end it.</string>
     <string name="notification_waiting">Watching for charger until %s.</string>

@@ -25,8 +25,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/master_switch"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginBottom="16dp" />
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_master" />
 
         <!-- Berechtigungen -->
         <TextView
@@ -91,6 +94,10 @@
             android:layout_height="wrap_content"
             android:text="@string/all_day" />
 
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_all_day" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,6 +122,10 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_window" />
+
         <!-- Effekte -->
         <TextView
             style="@style/SectionHeader"
@@ -126,11 +137,19 @@
             android:layout_height="wrap_content"
             android:text="@string/effect_grayscale" />
 
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_grayscale" />
+
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchAmbient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/effect_ambient" />
+
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_ambient" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchDimWallpaper"
@@ -138,16 +157,24 @@
             android:layout_height="wrap_content"
             android:text="@string/effect_dim_wallpaper" />
 
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_dim_wallpaper" />
+
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchNightMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/effect_night_mode"
-            android:layout_marginBottom="8dp" />
+            android:text="@string/effect_night_mode" />
+
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_night_mode" />
 
         <!-- DND-Filter -->
         <TextView
             style="@style/SectionHeader"
+            android:labelFor="@+id/dropdownFilter"
             android:text="@string/section_filter" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -163,6 +190,10 @@
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_filter" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPreview"
             android:layout_width="match_parent"
@@ -176,5 +207,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/mode_settings_button" />
+
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/about_title" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:background="@drawable/status_background"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/about_text" />
     </LinearLayout>
 </ScrollView>

@@ -15,6 +15,15 @@ import java.time.LocalTime
 class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        // Nur die erwarteten System-Actions akzeptieren — der Receiver ist
+        // exportiert (für BOOT_COMPLETED nötig) und sonst per explizitem
+        // Intent von Dritt-Apps auslösbar.
+        if (intent.action !in setOf(
+                Intent.ACTION_BOOT_COMPLETED,
+                Intent.ACTION_TIMEZONE_CHANGED,
+                Intent.ACTION_MY_PACKAGE_REPLACED
+            )
+        ) return
         val prefs = Prefs(context)
         if (!prefs.enabled) return
         AlarmScheduler.reschedule(context)

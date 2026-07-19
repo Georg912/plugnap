@@ -21,6 +21,7 @@ import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.time.LocalTime
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -194,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnDndAccess).isEnabled = !dnd
         findViewById<MaterialButton>(R.id.btnExactAlarm).isEnabled = !exact
 
-        val fmt = { m: Int -> String.format("%02d:%02d", m / 60, m % 60) }
+        val fmt = { m: Int -> String.format(Locale.ROOT, "%02d:%02d", m / 60, m % 60) }
         findViewById<Button>(R.id.btnWindowStart).text = fmt(prefs.windowStart)
         findViewById<Button>(R.id.btnWindowEnd).text = fmt(prefs.windowEnd)
 
