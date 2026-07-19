@@ -129,6 +129,8 @@ class MainActivity : AppCompatActivity() {
             ZenRuleManager.setActive(this, false)
         }
         updateStatus()
+        // Der Service aktiviert die Regel asynchron — Status kurz danach auffrischen.
+        handler.postDelayed({ updateStatus() }, 1200)
     }
 
     private fun bindEffect(id: Int, initial: Boolean, save: (Boolean) -> Unit) {
@@ -197,11 +199,15 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnWindowEnd).text = fmt(prefs.windowEnd)
 
         val charging = getSystemService(BatteryManager::class.java).isCharging
+        val now = LocalTime.now().hour * 60 + LocalTime.now().minute
+        val inWindow = prefs.allDay ||
+            Prefs.inWindow(now, prefs.windowStart, prefs.windowEnd)
         val status = findViewById<TextView>(R.id.textStatus)
         status.text = when {
             !prefs.enabled -> getString(R.string.status_disabled)
             !dnd -> getString(R.string.status_no_permission)
             prefs.ruleActive -> getString(R.string.status_active)
+            charging && inWindow -> getString(R.string.status_activating)
             charging -> getString(R.string.status_charging_outside_window)
             else -> getString(
                 R.string.status_waiting,

@@ -41,10 +41,24 @@ Kein Internet, keine Google-Dienste, keine Analytik. GPLv3.
 
 ```bash
 ./gradlew assembleDebug        # APK: app/build/outputs/apk/debug/
-./gradlew assembleRelease      # unsigniert; eigenes Signing-Config ergänzen
+./gradlew assembleRelease      # signiert, wenn Signing-Properties gesetzt sind
 ```
 
-Voraussetzungen: JDK 17+, Android SDK Platform 35.
+Voraussetzungen: JDK 17+ (volles JDK, nicht nur JRE), Android SDK Platform 35.
+
+### Release-Signing
+
+Keystore und Passwort liegen bewusst **außerhalb** des Repos, in
+`~/.gradle/gradle.properties`:
+
+```properties
+ZENDOCK_KEYSTORE=/pfad/zu/zendock-release.jks
+ZENDOCK_KEYSTORE_PW=…
+ZENDOCK_KEY_ALIAS=zendock
+```
+
+Ohne diese Properties baut `assembleRelease` unsigniert. **Keystore sichern!**
+Updates lassen sich nur mit demselben Schlüssel installieren.
 
 ## Installieren (Pixel, GrapheneOS)
 

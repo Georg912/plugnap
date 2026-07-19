@@ -16,6 +16,21 @@ android {
         versionName = "1.0"
     }
 
+    // Release-Signing: Keystore + Passwort liegen NICHT im Repo, sondern in
+    // ~/.gradle/gradle.properties (ZENDOCK_KEYSTORE, ZENDOCK_KEYSTORE_PW,
+    // ZENDOCK_KEY_ALIAS). Ohne diese Properties wird unsigniert gebaut.
+    val ksPath = providers.gradleProperty("ZENDOCK_KEYSTORE").orNull
+    if (ksPath != null) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(ksPath)
+                storePassword = providers.gradleProperty("ZENDOCK_KEYSTORE_PW").get()
+                keyAlias = providers.gradleProperty("ZENDOCK_KEY_ALIAS").get()
+                keyPassword = providers.gradleProperty("ZENDOCK_KEYSTORE_PW").get()
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -24,6 +39,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (ksPath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

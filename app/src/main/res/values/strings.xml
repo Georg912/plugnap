@@ -39,6 +39,7 @@
     <string name="status_no_permission">Do Not Disturb access is missing — grant it below.</string>
     <string name="status_active">Bedtime mode is active (charger connected).</string>
     <string name="status_charging_outside_window">Charging, but outside the night window.</string>
+    <string name="status_activating">Charging in the night window — activating…</string>
     <string name="status_waiting">Waiting for charger (%s).</string>
     <string name="status_anytime">any time</string>
 

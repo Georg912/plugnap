@@ -39,6 +39,7 @@
     <string name="status_no_permission">„Bitte nicht stören"-Zugriff fehlt — unten erteilen.</string>
     <string name="status_active">Schlafmodus ist aktiv (Ladegerät verbunden).</string>
     <string name="status_charging_outside_window">Lädt, aber außerhalb des Nachtfensters.</string>
+    <string name="status_activating">Lädt im Nachtfenster — wird aktiviert …</string>
     <string name="status_waiting">Warte auf Ladegerät (%s).</string>
     <string name="status_anytime">jederzeit</string>
 
