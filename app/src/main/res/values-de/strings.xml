@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ZenDock</string>
+    <string name="zen_rule_name">Schlafenszeit (Laden)</string>
+    <string name="zen_trigger_description">Beim Laden in der Nacht</string>
+    <string name="condition_active">Ladegerät verbunden</string>
+    <string name="condition_inactive">Ladegerät getrennt</string>
+
+    <string name="master_switch">Schlafmodus beim Laden aktivieren</string>
+
+    <string name="section_permissions">Berechtigungen</string>
+    <string name="permission_dnd">„Bitte nicht stören"-Zugriff</string>
+    <string name="permission_exact_alarm">Wecker &amp; Erinnerungen</string>
+    <string name="permission_granted">✓</string>
+    <string name="permission_missing">✗</string>
+    <string name="grant">Erteilen</string>
+
+    <string name="section_window">Nachtfenster</string>
+    <string name="all_day">Zu jeder Tageszeit auslösen</string>
+    <string name="window_from_to">Aktiv von / bis</string>
+
+    <string name="section_effects">Bildschirmeffekte</string>
+    <string name="effect_grayscale">Graustufen</string>
+    <string name="effect_ambient">Always-on-Display ausschalten</string>
+    <string name="effect_dim_wallpaper">Hintergrund dimmen</string>
+    <string name="effect_night_mode">Dunkles Design</string>
+
+    <string name="section_filter">Benachrichtigungsfilter</string>
+    <string-array name="filter_labels">
+        <item>Nur Priorität</item>
+        <item>Nur Wecker</item>
+        <item>Totale Stille</item>
+    </string-array>
+
+    <string name="preview_button">Effekte 15 Sekunden testen</string>
+    <string name="mode_settings_button">Modus in Systemeinstellungen öffnen</string>
+
+    <string name="status_disabled">Automatik ist aus.</string>
+    <string name="status_no_permission">„Bitte nicht stören"-Zugriff fehlt — unten erteilen.</string>
+    <string name="status_active">Schlafmodus ist aktiv (Ladegerät verbunden).</string>
+    <string name="status_charging_outside_window">Lädt, aber außerhalb des Nachtfensters.</string>
+    <string name="status_waiting">Warte auf Ladegerät (%s).</string>
+    <string name="status_anytime">jederzeit</string>
+
+    <string name="notification_channel">Lade-Überwachung</string>
+    <string name="notification_active">Schlafmodus aktiv — Abstecken beendet ihn.</string>
+    <string name="notification_waiting">Überwache Ladegerät bis %s.</string>
+    <string name="notification_waiting_allday">Überwache Ladegerät.</string>
+</resources>

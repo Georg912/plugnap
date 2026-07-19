@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/textStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:background="@drawable/status_background"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchEnabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/master_switch"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Berechtigungen -->
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_permissions" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/permission_dnd" />
+            <TextView
+                android:id="@+id/textDndStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDndAccess"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/grant" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/permission_exact_alarm" />
+            <TextView
+                android:id="@+id/textExactStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExactAlarm"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/grant" />
+        </LinearLayout>
+
+        <!-- Zeitfenster -->
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_window" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchAllDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/all_day" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/window_from_to" />
+            <Button
+                android:id="@+id/btnWindowStart"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp" />
+            <Button
+                android:id="@+id/btnWindowEnd"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Effekte -->
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_effects" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchGrayscale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/effect_grayscale" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchAmbient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/effect_ambient" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchDimWallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/effect_dim_wallpaper" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchNightMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/effect_night_mode"
+            android:layout_marginBottom="8dp" />
+
+        <!-- DND-Filter -->
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_filter" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/dropdownFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/preview_button"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModeSettings"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_settings_button" />
+    </LinearLayout>
+</ScrollView>

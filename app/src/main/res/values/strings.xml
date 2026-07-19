@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ZenDock</string>
+    <string name="zen_rule_name">Bedtime (charging)</string>
+    <string name="zen_trigger_description">While charging at night</string>
+    <string name="condition_active">Charger connected</string>
+    <string name="condition_inactive">Charger disconnected</string>
+
+    <string name="master_switch">Enable bedtime mode while charging</string>
+
+    <string name="section_permissions">Permissions</string>
+    <string name="permission_dnd">Do Not Disturb access</string>
+    <string name="permission_exact_alarm">Alarms &amp; reminders</string>
+    <string name="permission_granted">✓</string>
+    <string name="permission_missing">✗</string>
+    <string name="grant">Grant</string>
+
+    <string name="section_window">Night window</string>
+    <string name="all_day">Trigger at any time of day</string>
+    <string name="window_from_to">Active from / until</string>
+
+    <string name="section_effects">Screen effects</string>
+    <string name="effect_grayscale">Grayscale</string>
+    <string name="effect_ambient">Turn off always-on display</string>
+    <string name="effect_dim_wallpaper">Dim wallpaper</string>
+    <string name="effect_night_mode">Dark theme</string>
+
+    <string name="section_filter">Notification filtering</string>
+    <string-array name="filter_labels">
+        <item>Priority only</item>
+        <item>Alarms only</item>
+        <item>Total silence</item>
+    </string-array>
+
+    <string name="preview_button">Preview effects for 15 seconds</string>
+    <string name="mode_settings_button">Open mode in system settings</string>
+
+    <string name="status_disabled">Automation is off.</string>
+    <string name="status_no_permission">Do Not Disturb access is missing — grant it below.</string>
+    <string name="status_active">Bedtime mode is active (charger connected).</string>
+    <string name="status_charging_outside_window">Charging, but outside the night window.</string>
+    <string name="status_waiting">Waiting for charger (%s).</string>
+    <string name="status_anytime">any time</string>
+
+    <string name="notification_channel">Bedtime watcher</string>
+    <string name="notification_active">Bedtime mode active — unplug to end it.</string>
+    <string name="notification_waiting">Watching for charger until %s.</string>
+    <string name="notification_waiting_allday">Watching for charger.</string>
+</resources>
