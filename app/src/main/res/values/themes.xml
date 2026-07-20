@@ -4,6 +4,13 @@
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
     <style name="HelpText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

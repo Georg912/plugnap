@@ -11,6 +11,28 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:importantForAccessibility="no"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:text="@string/app_name"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/textStatus"
             android:layout_width="match_parent"
@@ -32,6 +54,8 @@
             android:text="@string/help_master" />
 
         <!-- Berechtigungen -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
         <TextView
             style="@style/SectionHeader"
             android:text="@string/section_permissions" />
@@ -84,6 +108,8 @@
         </LinearLayout>
 
         <!-- Zeitfenster -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
         <TextView
             style="@style/SectionHeader"
             android:text="@string/section_window" />
@@ -127,6 +153,8 @@
             android:text="@string/help_window" />
 
         <!-- Effekte -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
         <TextView
             style="@style/SectionHeader"
             android:text="@string/section_effects" />
@@ -172,6 +200,8 @@
             android:text="@string/help_night_mode" />
 
         <!-- DND-Filter -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
         <TextView
             style="@style/SectionHeader"
             android:labelFor="@+id/dropdownFilter"
@@ -207,6 +237,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/mode_settings_button" />
+
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
 
         <TextView
             style="@style/SectionHeader"
