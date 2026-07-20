@@ -4,9 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import java.time.LocalDate
+import java.time.Instant
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 
 /**
@@ -20,6 +19,7 @@ object AlarmScheduler {
 
     const val ACTION_WINDOW_START = "at.hufnagl.zendock.WINDOW_START"
     const val ACTION_WINDOW_END = "at.hufnagl.zendock.WINDOW_END"
+    const val ACTION_SKIP_TONIGHT = "at.hufnagl.zendock.SKIP_TONIGHT"
 
     fun canScheduleExact(context: Context): Boolean =
         context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
@@ -37,8 +37,23 @@ object AlarmScheduler {
             return
         }
 
-        set(am, nextOccurrence(prefs.windowStart), startPi)
-        set(am, nextOccurrence(prefs.windowEnd), endPi)
+        val now = LocalDateTime.now()
+        set(am, Schedule.toEpochMillis(Schedule.nextStart(now, prefs)), startPi)
+        set(am, Schedule.toEpochMillis(effectiveEnd(now, prefs, am)), endPi)
+    }
+
+    /**
+     * Reguläres Fensterende — oder früher, wenn "Beim Wecker beenden" aktiv ist
+     * und der nächste Wecker noch innerhalb des Fensters klingelt.
+     */
+    private fun effectiveEnd(now: LocalDateTime, prefs: Prefs, am: AlarmManager): LocalDateTime {
+        val end = Schedule.nextEnd(now, prefs)
+        if (!prefs.endAtAlarm) return end
+        val trigger = am.nextAlarmClock?.triggerTime ?: return end
+        val alarmDt = LocalDateTime.ofInstant(Instant.ofEpochMilli(trigger), ZoneId.systemDefault())
+        val current = Schedule.currentWindow(now, prefs)
+        val insideWindow = current == null || alarmDt.isAfter(current.start)
+        return if (alarmDt.isAfter(now) && alarmDt.isBefore(end) && insideWindow) alarmDt else end
     }
 
     private fun set(am: AlarmManager, triggerAtMillis: Long, pi: PendingIntent) {
@@ -57,15 +72,5 @@ object AlarmScheduler {
             context, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
-
-    /** Nächster Zeitpunkt (heute oder morgen) für minuteOfDay, als Epoch-Millis. */
-    private fun nextOccurrence(minuteOfDay: Int): Long {
-        val zone = ZoneId.systemDefault()
-        val now = LocalDateTime.now(zone)
-        val time = LocalTime.of(minuteOfDay / 60, minuteOfDay % 60)
-        var candidate = LocalDateTime.of(LocalDate.now(zone), time)
-        if (!candidate.isAfter(now)) candidate = candidate.plusDays(1)
-        return candidate.atZone(zone).toInstant().toEpochMilli()
     }
 }

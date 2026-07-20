@@ -13,14 +13,18 @@ import android.provider.Settings
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import java.time.LocalTime
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -65,6 +69,13 @@ class MainActivity : AppCompatActivity() {
             applyConfiguration()
         }
 
+        // --- Heute aussetzen ---
+        findViewById<MaterialButton>(R.id.btnSkip).setOnClickListener {
+            prefs.skipUntil =
+                if (skipActive()) 0L else Schedule.skipUntilMillis(prefs)
+            applyConfiguration()
+        }
+
         // --- Zeitfenster ---
         val allDay = findViewById<MaterialSwitch>(R.id.switchAllDay)
         allDay.isChecked = prefs.allDay
@@ -78,6 +89,33 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnWindowEnd).setOnClickListener {
             pickTime(prefs.windowEnd) { prefs.windowEnd = it; applyConfiguration() }
         }
+
+        // --- Wochenende ---
+        val weekend = findViewById<MaterialSwitch>(R.id.switchWeekend)
+        weekend.isChecked = prefs.weekendEnabled
+        weekend.setOnCheckedChangeListener { _, checked ->
+            prefs.weekendEnabled = checked
+            applyConfiguration()
+        }
+        findViewById<Button>(R.id.btnWeekendStart).setOnClickListener {
+            pickTime(prefs.weekendStart) { prefs.weekendStart = it; applyConfiguration() }
+        }
+        findViewById<Button>(R.id.btnWeekendEnd).setOnClickListener {
+            pickTime(prefs.weekendEnd) { prefs.weekendEnd = it; applyConfiguration() }
+        }
+
+        // --- Wecker-Ende ---
+        val endAtAlarm = findViewById<MaterialSwitch>(R.id.switchEndAtAlarm)
+        endAtAlarm.isChecked = prefs.endAtAlarm
+        endAtAlarm.setOnCheckedChangeListener { _, checked ->
+            prefs.endAtAlarm = checked
+            applyConfiguration()
+        }
+
+        // --- Ladearten ---
+        bindPlugType(R.id.cbAc, { prefs.plugAc }, { prefs.plugAc = it })
+        bindPlugType(R.id.cbUsb, { prefs.plugUsb }, { prefs.plugUsb = it })
+        bindPlugType(R.id.cbWireless, { prefs.plugWireless }, { prefs.plugWireless = it })
 
         // --- Effekte ---
         bindEffect(R.id.switchGrayscale, prefs.grayscale) { prefs.grayscale = it }
@@ -115,15 +153,18 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    private fun skipActive() = System.currentTimeMillis() < prefs.skipUntil
+
     /** Nach jeder Einstellungsänderung: Regel, Alarme und Service anpassen. */
     private fun applyConfiguration() {
         if (prefs.enabled && ZenRuleManager.hasDndAccess(this)) {
             ZenRuleManager.ensureRule(this)
             AlarmScheduler.reschedule(this)
-            val now = LocalTime.now().hour * 60 + LocalTime.now().minute
-            val inWindow = prefs.allDay ||
-                Prefs.inWindow(now, prefs.windowStart, prefs.windowEnd)
-            if (inWindow) BedtimeService.start(this) else BedtimeService.stop(this)
+            if (Schedule.inWindow(LocalDateTime.now(), prefs)) {
+                BedtimeService.start(this)
+            } else {
+                BedtimeService.stop(this)
+            }
         } else {
             AlarmScheduler.reschedule(this)
             BedtimeService.stop(this)
@@ -138,6 +179,26 @@ class MainActivity : AppCompatActivity() {
         val sw = findViewById<MaterialSwitch>(id)
         sw.isChecked = initial
         sw.setOnCheckedChangeListener { _, checked ->
+            save(checked)
+            applyConfiguration()
+        }
+    }
+
+    private fun bindPlugType(id: Int, get: () -> Boolean, save: (Boolean) -> Unit) {
+        val cb = findViewById<CheckBox>(id)
+        cb.isChecked = get()
+        cb.setOnCheckedChangeListener { _, checked ->
+            if (!checked) {
+                // Mindestens eine Ladeart muss aktiv bleiben (prefs hält hier
+                // noch den alten Wert, daher -1 für die gerade abgewählte).
+                val remaining = listOf(prefs.plugAc, prefs.plugUsb, prefs.plugWireless)
+                    .count { it } - 1
+                if (remaining < 1) {
+                    cb.isChecked = true
+                    Toast.makeText(this, R.string.charger_keep_one, Toast.LENGTH_SHORT).show()
+                    return@setOnCheckedChangeListener
+                }
+            }
             save(checked)
             applyConfiguration()
         }
@@ -198,15 +259,28 @@ class MainActivity : AppCompatActivity() {
         val fmt = { m: Int -> String.format(Locale.ROOT, "%02d:%02d", m / 60, m % 60) }
         findViewById<Button>(R.id.btnWindowStart).text = fmt(prefs.windowStart)
         findViewById<Button>(R.id.btnWindowEnd).text = fmt(prefs.windowEnd)
+        findViewById<Button>(R.id.btnWeekendStart).text = fmt(prefs.weekendStart)
+        findViewById<Button>(R.id.btnWeekendEnd).text = fmt(prefs.weekendEnd)
+        val weekendOn = prefs.weekendEnabled
+        findViewById<Button>(R.id.btnWeekendStart).isEnabled = weekendOn
+        findViewById<Button>(R.id.btnWeekendEnd).isEnabled = weekendOn
+
+        findViewById<MaterialButton>(R.id.btnSkip).text = getString(
+            if (skipActive()) R.string.resume_skip else R.string.skip_tonight
+        )
 
         val charging = getSystemService(BatteryManager::class.java).isCharging
-        val now = LocalTime.now().hour * 60 + LocalTime.now().minute
-        val inWindow = prefs.allDay ||
-            Prefs.inWindow(now, prefs.windowStart, prefs.windowEnd)
+        val inWindow = Schedule.inWindow(LocalDateTime.now(), prefs)
         val status = findViewById<TextView>(R.id.textStatus)
         status.text = when {
             !prefs.enabled -> getString(R.string.status_disabled)
             !dnd -> getString(R.string.status_no_permission)
+            skipActive() -> getString(
+                R.string.status_skipped,
+                LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(prefs.skipUntil), ZoneId.systemDefault()
+                ).let { fmt(it.hour * 60 + it.minute) }
+            )
             prefs.ruleActive -> getString(R.string.status_active)
             charging && inWindow -> getString(R.string.status_activating)
             charging -> getString(R.string.status_charging_outside_window)

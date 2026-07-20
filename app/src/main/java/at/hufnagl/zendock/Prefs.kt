@@ -26,6 +26,42 @@ class Prefs(context: Context) {
         get() = sp.getInt("window_end", 7 * 60)
         set(v) = sp.edit().putInt("window_end", v).apply()
 
+    /** Eigene Zeiten für die Nächte Fr→Sa und Sa→So */
+    var weekendEnabled: Boolean
+        get() = sp.getBoolean("weekend_enabled", false)
+        set(v) = sp.edit().putBoolean("weekend_enabled", v).apply()
+
+    var weekendStart: Int
+        get() = sp.getInt("weekend_start", 23 * 60)
+        set(v) = sp.edit().putInt("weekend_start", v).apply()
+
+    var weekendEnd: Int
+        get() = sp.getInt("weekend_end", 8 * 60)
+        set(v) = sp.edit().putInt("weekend_end", v).apply()
+
+    /** Welche Ladearten den Modus auslösen dürfen */
+    var plugAc: Boolean
+        get() = sp.getBoolean("plug_ac", true)
+        set(v) = sp.edit().putBoolean("plug_ac", v).apply()
+
+    var plugUsb: Boolean
+        get() = sp.getBoolean("plug_usb", true)
+        set(v) = sp.edit().putBoolean("plug_usb", v).apply()
+
+    var plugWireless: Boolean
+        get() = sp.getBoolean("plug_wireless", true)
+        set(v) = sp.edit().putBoolean("plug_wireless", v).apply()
+
+    /** Modus schon beim nächsten Wecker beenden statt erst am Fensterende */
+    var endAtAlarm: Boolean
+        get() = sp.getBoolean("end_at_alarm", false)
+        set(v) = sp.edit().putBoolean("end_at_alarm", v).apply()
+
+    /** "Heute aussetzen": bis zu diesem Zeitpunkt (Epoch-Millis) nicht aktivieren */
+    var skipUntil: Long
+        get() = sp.getLong("skip_until", 0L)
+        set(v) = sp.edit().putLong("skip_until", v).apply()
+
     var grayscale: Boolean
         get() = sp.getBoolean("fx_grayscale", true)
         set(v) = sp.edit().putBoolean("fx_grayscale", v).apply()

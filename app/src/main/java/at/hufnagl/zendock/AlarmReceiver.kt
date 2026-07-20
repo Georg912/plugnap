@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-/** Empfängt Fensterstart/-ende und plant den jeweils nächsten Alarm. */
+/**
+ * Empfängt Fensterstart/-ende und die "Heute aussetzen"-Aktion aus der
+ * Benachrichtigung; plant danach jeweils die nächsten Alarme.
+ */
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -26,6 +29,16 @@ class AlarmReceiver : BroadcastReceiver() {
                 // Deaktivieren geht auch ohne laufenden Service direkt hier.
                 ZenRuleManager.setActive(context, false)
                 context.stopService(Intent(context, BedtimeService::class.java))
+            }
+            AlarmScheduler.ACTION_SKIP_TONIGHT -> {
+                prefs.skipUntil = Schedule.skipUntilMillis(prefs)
+                ZenRuleManager.setActive(context, false)
+                // Laufenden Service anstoßen, damit die Notification den
+                // Aussetzen-Status anzeigt (Service ist bereits Foreground).
+                try {
+                    BedtimeService.start(context)
+                } catch (_: Exception) {
+                }
             }
         }
         AlarmScheduler.reschedule(context)

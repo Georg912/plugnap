@@ -18,6 +18,23 @@
     <string name="section_window">Night window</string>
     <string name="all_day">Trigger at any time of day</string>
     <string name="window_from_to">Active from / until</string>
+    <string name="weekend_switch">Weekend times</string>
+    <string name="help_weekend">Separate window for Friday and Saturday nights.</string>
+    <string name="weekend_from_to">Fri/Sat from / until</string>
+    <string name="end_at_alarm">End at next alarm clock</string>
+    <string name="help_end_at_alarm">If your alarm rings before the window ends, the mode already switches off at the alarm.</string>
+
+    <string name="section_charger">Charger types</string>
+    <string name="charger_ac">Power adapter</string>
+    <string name="charger_usb">USB</string>
+    <string name="charger_wireless">Wireless</string>
+    <string name="help_charger">Only the selected charger types trigger the mode — e.g. wireless on the nightstand yes, USB at the PC no.</string>
+    <string name="charger_keep_one">At least one charger type must stay selected.</string>
+
+    <string name="skip_tonight">Skip tonight</string>
+    <string name="resume_skip">Stop skipping</string>
+    <string name="status_skipped">Skipped tonight (until %s).</string>
+    <string name="notification_skipped">Skipped tonight — mode will not activate.</string>
 
     <string name="section_effects">Screen effects</string>
     <string name="effect_grayscale">Grayscale</string>

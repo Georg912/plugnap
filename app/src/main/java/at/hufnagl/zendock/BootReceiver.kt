@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 /**
  * Stellt nach Boot, Zeitzonenwechsel oder App-Update die Alarme wieder her und
@@ -27,10 +27,7 @@ class BootReceiver : BroadcastReceiver() {
         val prefs = Prefs(context)
         if (!prefs.enabled) return
         AlarmScheduler.reschedule(context)
-        val now = LocalTime.now().hour * 60 + LocalTime.now().minute
-        val inWindow = prefs.allDay ||
-            Prefs.inWindow(now, prefs.windowStart, prefs.windowEnd)
-        if (inWindow) {
+        if (Schedule.inWindow(LocalDateTime.now(), prefs)) {
             try {
                 BedtimeService.start(context)
             } catch (e: Exception) {

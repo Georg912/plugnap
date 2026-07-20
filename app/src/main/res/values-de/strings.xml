@@ -18,6 +18,23 @@
     <string name="section_window">Nachtfenster</string>
     <string name="all_day">Zu jeder Tageszeit auslösen</string>
     <string name="window_from_to">Aktiv von / bis</string>
+    <string name="weekend_switch">Wochenend-Zeiten</string>
+    <string name="help_weekend">Eigenes Fenster für die Nächte Fr→Sa und Sa→So.</string>
+    <string name="weekend_from_to">Fr/Sa aktiv von / bis</string>
+    <string name="end_at_alarm">Beim nächsten Wecker beenden</string>
+    <string name="help_end_at_alarm">Klingelt dein Wecker vor dem Fensterende, schaltet der Modus schon beim Wecker ab.</string>
+
+    <string name="section_charger">Ladearten</string>
+    <string name="charger_ac">Netzteil</string>
+    <string name="charger_usb">USB</string>
+    <string name="charger_wireless">Kabellos</string>
+    <string name="help_charger">Nur die ausgewählten Ladearten lösen den Modus aus — z. B. kabellos am Nachtkästchen ja, USB am PC nein.</string>
+    <string name="charger_keep_one">Mindestens eine Ladeart muss ausgewählt bleiben.</string>
+
+    <string name="skip_tonight">Heute aussetzen</string>
+    <string name="resume_skip">Aussetzen beenden</string>
+    <string name="status_skipped">Heute ausgesetzt (bis %s).</string>
+    <string name="notification_skipped">Heute ausgesetzt — der Modus bleibt aus.</string>
 
     <string name="section_effects">Bildschirmeffekte</string>
     <string name="effect_grayscale">Graustufen</string>
