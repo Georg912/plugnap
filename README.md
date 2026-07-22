@@ -1,4 +1,6 @@
-# ZenDock
+# PlugNap
+
+> *Ladenschluss für dein Handy.*
 
 **Bedtime-Modus beim Laden — für Android 15+ (gebaut für GrapheneOS auf dem Pixel).**
 
@@ -7,7 +9,7 @@
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Einstellungen">
 </p>
 
-ZenDock schließt eine Lücke, die bisher nur das proprietäre Tasker abdeckte:
+PlugNap schließt eine Lücke, die bisher nur das proprietäre Tasker abdeckte:
 Es legt eine app-eigene `AutomaticZenRule` mit **`ZenDeviceEffects`** an und
 aktiviert sie, sobald das Ladegerät angesteckt wird — inklusive der
 Bildschirmeffekte, die sonst nur der System-Zeitplan schalten kann:
@@ -57,7 +59,7 @@ Keystore und Passwort liegen bewusst **außerhalb** des Repos, in
 `~/.gradle/gradle.properties`:
 
 ```properties
-ZENDOCK_KEYSTORE=/pfad/zu/zendock-release.jks
+ZENDOCK_KEYSTORE=/pfad/zu/zendock-release.jks (Name historisch, Schlüssel gilt für PlugNap)
 ZENDOCK_KEYSTORE_PW=…
 ZENDOCK_KEY_ALIAS=zendock
 ```

@@ -4,16 +4,16 @@ plugins {
 }
 
 android {
-    namespace = "at.hufnagl.zendock"
+    namespace = "io.github.georg912.plugnap"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "at.hufnagl.zendock"
+        applicationId = "io.github.georg912.plugnap"
         // ZenDeviceEffects / AutomaticZenRule.Builder gibt es erst ab Android 15 (API 35)
         minSdk = 35
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.2.0"
     }
 
     // Release-Signing: Keystore + Passwort liegen NICHT im Repo, sondern in

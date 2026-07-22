@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ZenDock</string>
+    <string name="app_name">PlugNap</string>
     <string name="zen_rule_name">Schlafenszeit (Laden)</string>
     <string name="zen_trigger_description">Beim Laden in der Nacht</string>
     <string name="condition_active">Ladegerät verbunden</string>
@@ -60,7 +60,7 @@
     <string name="status_waiting">Warte auf Ladegerät (%s).</string>
     <string name="status_anytime">jederzeit</string>
 
-    <string name="help_master">Solange das an ist, achtet ZenDock im Nachtfenster auf das Ladegerät: anstecken → Schlafmodus an, abstecken → aus.</string>
+    <string name="help_master">Solange das an ist, achtet PlugNap im Nachtfenster auf das Ladegerät: anstecken → Schlafmodus an, abstecken → aus.</string>
     <string name="help_window">Nur innerhalb dieses Fensters löst das Ladegerät den Modus aus — tagsüber anstecken macht den Bildschirm nicht grau. Am Fensterende schaltet der Modus ab, auch wenn das Handy weiterlädt.</string>
     <string name="help_all_day">Fenster ignorieren und rund um die Uhr aufs Ladegerät reagieren.</string>
     <string name="help_grayscale">Entzieht dem Bildschirm alle Farben. Scrollen verliert seinen Reiz — der stärkste Anstoß, das Handy wegzulegen.</string>
@@ -69,7 +69,7 @@
     <string name="help_night_mode">Erzwingt das dunkle Design. Android übernimmt es beim nächsten Ausschalten des Bildschirms.</string>
     <string name="help_filter">Was noch durchdarf: „Nur Priorität“ lässt Wecker, Medien und markierte Kontakte durch; „Nur Wecker“ nur Alarme; „Totale Stille“ gar nichts.</string>
     <string name="about_title">So funktioniert\'s</string>
-    <string name="about_text">ZenDock registriert einen eigenen Modus in den Systemeinstellungen (Modi / Bitte nicht stören) — dort kannst du ihn auch feinjustieren oder manuell schalten.\n\nAkku: Alles ist ereignisgesteuert. Ein kleiner Wächter läuft nur im Nachtfenster und wartet passiv auf Ladegerät-Ereignisse; es gibt kein Polling, dazu zwei Alarme pro Tag für die Fenstergrenzen. Die App hat außerdem keinerlei Internetzugriff.</string>
+    <string name="about_text">PlugNap registriert einen eigenen Modus in den Systemeinstellungen (Modi / Bitte nicht stören) — dort kannst du ihn auch feinjustieren oder manuell schalten.\n\nAkku: Alles ist ereignisgesteuert. Ein kleiner Wächter läuft nur im Nachtfenster und wartet passiv auf Ladegerät-Ereignisse; es gibt kein Polling, dazu zwei Alarme pro Tag für die Fenstergrenzen. Die App hat außerdem keinerlei Internetzugriff.</string>
 
     <string name="notification_channel">Lade-Überwachung</string>
     <string name="notification_active">Schlafmodus aktiv — Abstecken beendet ihn.</string>

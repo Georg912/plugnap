@@ -1,4 +1,4 @@
-package at.hufnagl.zendock
+package io.github.georg912.plugnap
 
 import android.app.AutomaticZenRule
 import android.app.NotificationManager
@@ -21,7 +21,7 @@ import android.util.Log
 object ZenRuleManager {
 
     private const val TAG = "ZenDock"
-    val CONDITION_URI: Uri = Uri.parse("condition://at.hufnagl.zendock/charging-bedtime")
+    val CONDITION_URI: Uri = Uri.parse("condition://io.github.georg912.plugnap/charging-bedtime")
 
     fun hasDndAccess(context: Context): Boolean =
         context.getSystemService(NotificationManager::class.java)

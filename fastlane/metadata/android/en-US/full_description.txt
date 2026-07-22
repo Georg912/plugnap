@@ -1,4 +1,4 @@
-ZenDock turns your nightly charging routine into a wind-down ritual. Plug in your phone during the configurable night window and it activates a bedtime mode with real device effects via Android's ZenDeviceEffects API (Android 15+):
+PlugNap turns your nightly charging routine into a wind-down ritual. Plug in your phone during the configurable night window and it activates a bedtime mode with real device effects via Android's ZenDeviceEffects API (Android 15+):
 
 * Grayscale — scrolling loses its pull
 * Always-on display off — nothing glows on the nightstand

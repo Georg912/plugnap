@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ZenDock"
+rootProject.name = "PlugNap"
 include(":app")

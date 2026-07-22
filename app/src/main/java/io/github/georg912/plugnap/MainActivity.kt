@@ -1,4 +1,4 @@
-package at.hufnagl.zendock
+package io.github.georg912.plugnap
 
 import android.Manifest
 import android.app.NotificationManager

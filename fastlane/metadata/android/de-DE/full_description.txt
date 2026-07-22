@@ -1,4 +1,4 @@
-ZenDock macht aus dem abendlichen Anstecken des Ladegeräts ein Abschalt-Ritual. Im konfigurierbaren Nachtfenster angesteckt, aktiviert es einen Schlafmodus mit echten Geräteeffekten über Androids ZenDeviceEffects-API (Android 15+):
+PlugNap macht aus dem abendlichen Anstecken des Ladegeräts ein Abschalt-Ritual. Im konfigurierbaren Nachtfenster angesteckt, aktiviert es einen Schlafmodus mit echten Geräteeffekten über Androids ZenDeviceEffects-API (Android 15+):
 
 * Graustufen — Scrollen verliert seinen Reiz
 * Always-on-Display aus — nichts leuchtet am Nachtkästchen

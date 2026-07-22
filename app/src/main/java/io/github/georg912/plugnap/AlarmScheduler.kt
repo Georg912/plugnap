@@ -1,4 +1,4 @@
-package at.hufnagl.zendock
+package io.github.georg912.plugnap
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -17,9 +17,9 @@ import java.time.ZoneId
  */
 object AlarmScheduler {
 
-    const val ACTION_WINDOW_START = "at.hufnagl.zendock.WINDOW_START"
-    const val ACTION_WINDOW_END = "at.hufnagl.zendock.WINDOW_END"
-    const val ACTION_SKIP_TONIGHT = "at.hufnagl.zendock.SKIP_TONIGHT"
+    const val ACTION_WINDOW_START = "io.github.georg912.plugnap.WINDOW_START"
+    const val ACTION_WINDOW_END = "io.github.georg912.plugnap.WINDOW_END"
+    const val ACTION_SKIP_TONIGHT = "io.github.georg912.plugnap.SKIP_TONIGHT"
 
     fun canScheduleExact(context: Context): Boolean =
         context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
