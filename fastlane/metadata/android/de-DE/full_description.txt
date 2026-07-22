@@ -1,0 +1,22 @@
+ZenDock macht aus dem abendlichen Anstecken des Ladegeräts ein Abschalt-Ritual. Im konfigurierbaren Nachtfenster angesteckt, aktiviert es einen Schlafmodus mit echten Geräteeffekten über Androids ZenDeviceEffects-API (Android 15+):
+
+* Graustufen — Scrollen verliert seinen Reiz
+* Always-on-Display aus — nichts leuchtet am Nachtkästchen
+* Gedimmter Hintergrund und erzwungenes dunkles Design
+* Bitte nicht stören (Priorität / Nur Wecker / Totale Stille)
+
+Abstecken — oder Fensterende bzw. Weckerklingeln — und alles schaltet zurück.
+
+Funktionen:
+
+* Konfigurierbares Nachtfenster, eigene Wochenend-Zeiten (Nächte Fr/Sa)
+* Ladeart-Filter: Netzteil, USB, kabellos
+* 30 Sekunden Karenz beim kurzen Abstecken
+* „Heute aussetzen" (auch in der Benachrichtigung)
+* Ende beim nächsten Wecker statt fixer Uhrzeit
+* Quick-Settings-Kachel zum manuellen Schalten
+* 15-Sekunden-Effektvorschau
+
+Privacy by Design: keinerlei Internet-Berechtigung, keine Tracker, keine Analytik, keine Google-Dienste. Die App registriert einen regulären System-Modus („Modi"/Bitte nicht stören), der sich in den Systemeinstellungen feinjustieren lässt. Alles ist ereignisgesteuert — kein Polling, kein messbarer Akkuverbrauch.
+
+Benötigt Android 15 oder neuer. Gebaut und getestet auf Android 15 und 16 (läuft auch bestens auf GrapheneOS).

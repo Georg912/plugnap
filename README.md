@@ -2,6 +2,11 @@
 
 **Bedtime-Modus beim Laden — für Android 15+ (gebaut für GrapheneOS auf dem Pixel).**
 
+<p>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" alt="Hauptbildschirm">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Einstellungen">
+</p>
+
 ZenDock schließt eine Lücke, die bisher nur das proprietäre Tasker abdeckte:
 Es legt eine app-eigene `AutomaticZenRule` mit **`ZenDeviceEffects`** an und
 aktiviert sie, sobald das Ladegerät angesteckt wird — inklusive der
@@ -74,3 +79,13 @@ mit „Effekte 15 Sekunden testen" prüfen.
 - Mindestens Android 15 (API 35) — vorher existiert die `ZenDeviceEffects`-API nicht.
 - `TYPE_BEDTIME` ist der System-Wellbeing-App vorbehalten; die Regel nutzt
   daher `TYPE_OTHER` (funktional identisch, nur andere Kategorisierung).
+
+## Lizenz
+
+Copyright © 2026 Georg Hufnagl.
+
+Dieses Programm ist freie Software: Weitergabe und Veränderung unter den
+Bedingungen der **GNU General Public License, Version 3 oder später**
+(GPL-3.0-or-later), siehe [LICENSE](LICENSE). Abhängigkeiten (AndroidX,
+Material Components) stehen unter Apache-2.0 und sind mit der GPLv3
+kompatibel.

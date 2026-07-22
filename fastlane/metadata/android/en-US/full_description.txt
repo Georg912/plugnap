@@ -1,0 +1,22 @@
+ZenDock turns your nightly charging routine into a wind-down ritual. Plug in your phone during the configurable night window and it activates a bedtime mode with real device effects via Android's ZenDeviceEffects API (Android 15+):
+
+* Grayscale — scrolling loses its pull
+* Always-on display off — nothing glows on the nightstand
+* Dimmed wallpaper and forced dark theme
+* Do Not Disturb (Priority / Alarms only / Total silence)
+
+Unplug — or let the window end / your alarm ring — and everything switches back.
+
+Features:
+
+* Configurable night window, separate weekend times (Fri/Sat nights)
+* Charger-type filter: power adapter, USB, wireless
+* 30-second grace period when unplugging briefly
+* "Skip tonight" button (also in the notification)
+* End at your next alarm clock instead of a fixed time
+* Quick-settings tile for manual toggling
+* 15-second effect preview
+
+Privacy by design: no internet permission at all, no trackers, no analytics, no Google services. The app registers a regular system mode ("Modes" / Do Not Disturb) that you can fine-tune in your system settings. Everything is event-driven — no polling, no measurable battery impact.
+
+Requires Android 15 or newer. Built for and tested against Android 15 and 16 (also runs great on GrapheneOS).
