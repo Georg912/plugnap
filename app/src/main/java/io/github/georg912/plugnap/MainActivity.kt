@@ -137,9 +137,32 @@ class MainActivity : AppCompatActivity() {
             applyConfiguration()
         }
 
-        // --- Abstecke-Karenz ---
+        // --- Anstecke-Verzögerung & Abstecke-Karenz ---
+        bindDropdown(R.id.dropdownPlugDelay, R.array.plug_delay_labels, PLUG_DELAY_VALUES,
+            prefs.plugInDelaySec) { prefs.plugInDelaySec = it }
         bindDropdown(R.id.dropdownGrace, R.array.grace_labels, GRACE_VALUES,
             prefs.unplugGraceSec) { prefs.unplugGraceSec = it }
+
+        // --- Benachrichtigung ausblenden ---
+        val hideNotif = findViewById<MaterialSwitch>(R.id.switchHideNotification)
+        hideNotif.isChecked = prefs.hideNotification
+        hideNotif.setOnCheckedChangeListener { _, checked ->
+            prefs.hideNotification = checked
+            // Service neu starten, damit die Notification auf den anderen
+            // Kanal wechselt (sichtbar <-> verborgen).
+            BedtimeService.stop(this)
+            applyConfiguration()
+            if (checked) {
+                // Android hebt die Wichtigkeit von FGS-Kanälen selbst wieder
+                // an — nur eine NUTZER-Blockade des Kanals ist endgültig.
+                // Also direkt dorthin führen.
+                startActivity(
+                    Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                        .putExtra(Settings.EXTRA_CHANNEL_ID, "bedtime_watch_hidden")
+                )
+            }
+        }
 
         // --- App-Design ---
         bindDropdown(R.id.dropdownTheme, R.array.theme_labels, THEME_VALUES,
@@ -325,6 +348,7 @@ class MainActivity : AppCompatActivity() {
             NotificationManager.INTERRUPTION_FILTER_NONE
         )
         private val GRACE_VALUES = intArrayOf(0, 15, 30, 60, 120)
+        private val PLUG_DELAY_VALUES = intArrayOf(0, 60, 120, 300, 600)
         private val THEME_VALUES = intArrayOf(
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
             AppCompatDelegate.MODE_NIGHT_NO,

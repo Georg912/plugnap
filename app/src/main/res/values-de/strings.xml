@@ -31,6 +31,20 @@
     <string name="help_charger">Nur die ausgewählten Ladearten lösen den Modus aus — z. B. kabellos am Nachtkästchen ja, USB am PC nein.</string>
     <string name="charger_keep_one">Mindestens eine Ladeart muss ausgewählt bleiben.</string>
 
+    <string name="plug_delay_label">Nach dem Anstecken aktivieren</string>
+    <string-array name="plug_delay_labels">
+        <item>Sofort</item>
+        <item>Nach 1 Minute</item>
+        <item>Nach 2 Minuten</item>
+        <item>Nach 5 Minuten</item>
+        <item>Nach 10 Minuten</item>
+    </string-array>
+    <string name="help_plug_delay">Kurzes Zwischenladen löst den Modus nicht aus.</string>
+
+    <string name="hide_notification">Status-Benachrichtigung ausblenden</string>
+    <string name="help_hide_notification">Beim Einschalten öffnen sich die Kanal-Einstellungen — dort einmalig „Benachrichtigungen erlauben" ausschalten. Der Wächter läuft trotzdem weiter; Android zeigt PlugNap ggf. unter „Aktive Apps".</string>
+    <string name="notification_channel_hidden">Lade-Überwachung (verborgen)</string>
+
     <string name="grace_label">Beim Abstecken ausschalten</string>
     <string-array name="grace_labels">
         <item>Sofort</item>

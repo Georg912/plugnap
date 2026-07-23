@@ -68,6 +68,16 @@ class Prefs(context: Context) {
         get() = sp.getInt("unplug_grace_sec", 30)
         set(v) = sp.edit().putInt("unplug_grace_sec", v).apply()
 
+    /** Verzögerung in Sekunden zwischen Anstecken und Aktivieren (0 = sofort) */
+    var plugInDelaySec: Int
+        get() = sp.getInt("plugin_delay_sec", 0)
+        set(v) = sp.edit().putInt("plugin_delay_sec", v).apply()
+
+    /** Status-Benachrichtigung des Wächters ausblenden (Kanal ohne Wichtigkeit) */
+    var hideNotification: Boolean
+        get() = sp.getBoolean("hide_notification", false)
+        set(v) = sp.edit().putBoolean("hide_notification", v).apply()
+
     /** App-Design: AppCompatDelegate.MODE_NIGHT_* */
     var themeMode: Int
         get() = sp.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

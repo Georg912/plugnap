@@ -40,11 +40,23 @@ class BedtimeService : Service() {
         updateNotification()
     }
 
+    // Verzögerte Aktivierung: kurzes Zwischenladen löst den Modus nicht aus.
+    private val delayedOn = Runnable {
+        evaluate()
+        updateNotification()
+    }
+
     private val powerReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                Intent.ACTION_POWER_CONNECTED -> evaluate()
+                Intent.ACTION_POWER_CONNECTED -> {
+                    handler.removeCallbacks(delayedOn)
+                    val delayMs = Prefs(context).plugInDelaySec * 1000L
+                    if (delayMs == 0L) evaluate()
+                    else handler.postDelayed(delayedOn, delayMs)
+                }
                 Intent.ACTION_POWER_DISCONNECTED -> {
+                    handler.removeCallbacks(delayedOn)
                     val prefs = Prefs(context)
                     if (prefs.ruleActive) {
                         val graceMs = prefs.unplugGraceSec * 1000L
@@ -119,6 +131,7 @@ class BedtimeService : Service() {
 
     override fun onDestroy() {
         handler.removeCallbacks(delayedOff)
+        handler.removeCallbacks(delayedOn)
         if (receiverRegistered) unregisterReceiver(powerReceiver)
         super.onDestroy()
     }
@@ -126,12 +139,23 @@ class BedtimeService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun createChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.notification_channel),
-            NotificationManager.IMPORTANCE_MIN
-        ).apply { setShowBadge(false) }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        val nm = getSystemService(NotificationManager::class.java)
+        nm.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.notification_channel),
+                NotificationManager.IMPORTANCE_MIN
+            ).apply { setShowBadge(false) }
+        )
+        // Kanal ohne Wichtigkeit: Der FGS läuft, aber Android zeigt keine
+        // Benachrichtigung an — die App-eigene "ausblenden"-Option.
+        nm.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_HIDDEN,
+                getString(R.string.notification_channel_hidden),
+                NotificationManager.IMPORTANCE_NONE
+            ).apply { setShowBadge(false) }
+        )
     }
 
     private fun buildNotification(): Notification {
@@ -154,7 +178,8 @@ class BedtimeService : Service() {
                 .setAction(AlarmScheduler.ACTION_SKIP_TONIGHT),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val channel = if (prefs.hideNotification) CHANNEL_HIDDEN else CHANNEL_ID
+        val builder = NotificationCompat.Builder(this, channel)
             .setSmallIcon(R.drawable.ic_bedtime)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
@@ -174,6 +199,7 @@ class BedtimeService : Service() {
 
     companion object {
         private const val CHANNEL_ID = "bedtime_watch"
+        private const val CHANNEL_HIDDEN = "bedtime_watch_hidden"
         private const val NOTIFICATION_ID = 1
 
         fun start(context: Context) {

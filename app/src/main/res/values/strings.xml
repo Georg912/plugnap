@@ -31,6 +31,20 @@
     <string name="help_charger">Only the selected charger types trigger the mode — e.g. wireless on the nightstand yes, USB at the PC no.</string>
     <string name="charger_keep_one">At least one charger type must stay selected.</string>
 
+    <string name="plug_delay_label">Activate after plugging in</string>
+    <string-array name="plug_delay_labels">
+        <item>Immediately</item>
+        <item>After 1 minute</item>
+        <item>After 2 minutes</item>
+        <item>After 5 minutes</item>
+        <item>After 10 minutes</item>
+    </string-array>
+    <string name="help_plug_delay">A quick top-up charge won\'t trigger the mode.</string>
+
+    <string name="hide_notification">Hide status notification</string>
+    <string name="help_hide_notification">Turning this on opens the channel settings — disable "Allow notifications" there once. The watcher keeps running; Android may still list PlugNap under "Active apps".</string>
+    <string name="notification_channel_hidden">Bedtime watcher (hidden)</string>
+
     <string name="grace_label">Turn off after unplugging</string>
     <string-array name="grace_labels">
         <item>Immediately</item>
