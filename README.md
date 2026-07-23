@@ -53,6 +53,15 @@ Kein Internet, keine Google-Dienste, keine Analytik. GPLv3.
 
 Voraussetzungen: JDK 17+ (volles JDK, nicht nur JRE), Android SDK Platform 35.
 
+### Tests
+
+```bash
+./gradlew test    # JVM-Unit-Tests: Fensterlogik (Schedule) + Dropdown-Mapping
+```
+
+Die Tests laufen ohne Emulator und sichern u. a. die Wochenend-/Mitternachts-
+Fensterberechnung und den Dropdown-Regressionsfall aus v1.4.0 ab.
+
 ### Release-Signing
 
 Keystore und Passwort liegen bewusst **außerhalb** des Repos, in

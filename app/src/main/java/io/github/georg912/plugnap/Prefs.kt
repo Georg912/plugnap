@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 /** Einstellungen der App. Zeiten als Minuten seit Mitternacht (lokale Zeit). */
-class Prefs(context: Context) {
+class Prefs(context: Context) : ScheduleParams {
     private val sp: SharedPreferences =
         context.getSharedPreferences("zendock", Context.MODE_PRIVATE)
 
@@ -15,28 +15,28 @@ class Prefs(context: Context) {
         set(v) = sp.edit().putBoolean("enabled", v).apply()
 
     /** true = Ladetrigger gilt rund um die Uhr, kein Zeitfenster */
-    var allDay: Boolean
+    override var allDay: Boolean
         get() = sp.getBoolean("all_day", false)
         set(v) = sp.edit().putBoolean("all_day", v).apply()
 
-    var windowStart: Int
+    override var windowStart: Int
         get() = sp.getInt("window_start", 21 * 60)
         set(v) = sp.edit().putInt("window_start", v).apply()
 
-    var windowEnd: Int
+    override var windowEnd: Int
         get() = sp.getInt("window_end", 7 * 60)
         set(v) = sp.edit().putInt("window_end", v).apply()
 
     /** Eigene Zeiten für die Nächte Fr→Sa und Sa→So */
-    var weekendEnabled: Boolean
+    override var weekendEnabled: Boolean
         get() = sp.getBoolean("weekend_enabled", false)
         set(v) = sp.edit().putBoolean("weekend_enabled", v).apply()
 
-    var weekendStart: Int
+    override var weekendStart: Int
         get() = sp.getInt("weekend_start", 23 * 60)
         set(v) = sp.edit().putInt("weekend_start", v).apply()
 
-    var weekendEnd: Int
+    override var weekendEnd: Int
         get() = sp.getInt("weekend_end", 8 * 60)
         set(v) = sp.edit().putInt("weekend_end", v).apply()
 
@@ -113,19 +113,4 @@ class Prefs(context: Context) {
     var ruleActive: Boolean
         get() = sp.getBoolean("rule_active", false)
         set(v) = sp.edit().putBoolean("rule_active", v).apply()
-
-    companion object {
-        /**
-         * Liegt [minuteOfDay] im Fenster [start, end)? Fenster darf über
-         * Mitternacht gehen (z. B. 21:00–07:00).
-         */
-        fun inWindow(minuteOfDay: Int, start: Int, end: Int): Boolean {
-            if (start == end) return false
-            return if (start < end) {
-                minuteOfDay in start until end
-            } else {
-                minuteOfDay >= start || minuteOfDay < end
-            }
-        }
-    }
 }

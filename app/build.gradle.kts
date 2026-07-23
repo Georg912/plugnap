@@ -12,8 +12,8 @@ android {
         // ZenDeviceEffects / AutomaticZenRule.Builder gibt es erst ab Android 15 (API 35)
         minSdk = 35
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.4.0"
+        versionCode = 7
+        versionName = "1.4.1"
     }
 
     // Release-Signing: Keystore + Passwort liegen NICHT im Repo, sondern in
@@ -58,4 +58,5 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
+    testImplementation("junit:junit:4.13.2")
 }

@@ -126,14 +126,9 @@ class MainActivity : AppCompatActivity() {
         bindEffect(R.id.switchNightMode, prefs.nightMode) { prefs.nightMode = it }
 
         // --- DND-Filter ---
-        val filterView = findViewById<AutoCompleteTextView>(R.id.dropdownFilter)
-        val labels = resources.getStringArray(R.array.filter_labels)
-        filterView.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, labels)
-        )
-        filterView.setText(labels[filterIndex(prefs.interruptionFilter)], false)
-        filterView.setOnItemClickListener { _, _, position, _ ->
-            prefs.interruptionFilter = FILTERS[position]
+        bindDropdown(R.id.dropdownFilter, R.array.filter_labels, FILTERS,
+            prefs.interruptionFilter) {
+            prefs.interruptionFilter = it
             applyConfiguration()
         }
 
@@ -220,15 +215,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** Verdrahtet ein Dropdown mit Label-Array und zugehörigen Werten. */
+    /**
+     * Verdrahtet ein Dropdown mit Label-Array und zugehörigen Werten.
+     *
+     * Wichtig: nicht-filternder Adapter + Zuordnung über den Label-Text.
+     * Nach einer Activity-Neuerstellung (z. B. Theme-Wechsel) stellt Android
+     * den Feldtext wieder her und der Standard-Adapter filtert die Liste auf
+     * den passenden Eintrag zusammen — dann stimmen Positionen nicht mehr.
+     */
     private fun bindDropdown(
         id: Int, labelsRes: Int, values: IntArray, current: Int, save: (Int) -> Unit
     ) {
         val view = findViewById<AutoCompleteTextView>(id)
         val labels = resources.getStringArray(labelsRes)
-        view.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, labels))
+        view.setAdapter(NoFilterAdapter(this, labels))
         view.setText(labels[values.indexOf(current).coerceAtLeast(0)], false)
-        view.setOnItemClickListener { _, _, position, _ -> save(values[position]) }
+        view.setOnItemClickListener { parent, _, position, _ ->
+            val label = parent.getItemAtPosition(position) as String
+            save(labelToValue(labels, values, label))
+        }
     }
 
     private fun bindPlugType(id: Int, get: () -> Boolean, save: (Boolean) -> Unit) {
@@ -338,8 +343,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-    private fun filterIndex(filter: Int) = FILTERS.indexOf(filter).coerceAtLeast(0)
 
     companion object {
         private val FILTERS = intArrayOf(
