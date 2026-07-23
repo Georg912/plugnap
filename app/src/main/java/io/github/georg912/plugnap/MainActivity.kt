@@ -17,6 +17,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -34,8 +35,9 @@ class MainActivity : AppCompatActivity() {
     private var previewRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         prefs = Prefs(this)
+        AppCompatDelegate.setDefaultNightMode(prefs.themeMode)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // --- Berechtigungen ---
@@ -135,6 +137,17 @@ class MainActivity : AppCompatActivity() {
             applyConfiguration()
         }
 
+        // --- Abstecke-Karenz ---
+        bindDropdown(R.id.dropdownGrace, R.array.grace_labels, GRACE_VALUES,
+            prefs.unplugGraceSec) { prefs.unplugGraceSec = it }
+
+        // --- App-Design ---
+        bindDropdown(R.id.dropdownTheme, R.array.theme_labels, THEME_VALUES,
+            prefs.themeMode) {
+            prefs.themeMode = it
+            AppCompatDelegate.setDefaultNightMode(it)
+        }
+
         // --- Test ---
         findViewById<MaterialButton>(R.id.btnPreview).setOnClickListener { runPreview() }
         findViewById<MaterialButton>(R.id.btnModeSettings).setOnClickListener {
@@ -182,6 +195,17 @@ class MainActivity : AppCompatActivity() {
             save(checked)
             applyConfiguration()
         }
+    }
+
+    /** Verdrahtet ein Dropdown mit Label-Array und zugehörigen Werten. */
+    private fun bindDropdown(
+        id: Int, labelsRes: Int, values: IntArray, current: Int, save: (Int) -> Unit
+    ) {
+        val view = findViewById<AutoCompleteTextView>(id)
+        val labels = resources.getStringArray(labelsRes)
+        view.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, labels))
+        view.setText(labels[values.indexOf(current).coerceAtLeast(0)], false)
+        view.setOnItemClickListener { _, _, position, _ -> save(values[position]) }
     }
 
     private fun bindPlugType(id: Int, get: () -> Boolean, save: (Boolean) -> Unit) {
@@ -299,6 +323,12 @@ class MainActivity : AppCompatActivity() {
             NotificationManager.INTERRUPTION_FILTER_PRIORITY,
             NotificationManager.INTERRUPTION_FILTER_ALARMS,
             NotificationManager.INTERRUPTION_FILTER_NONE
+        )
+        private val GRACE_VALUES = intArrayOf(0, 15, 30, 60, 120)
+        private val THEME_VALUES = intArrayOf(
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+            AppCompatDelegate.MODE_NIGHT_NO,
+            AppCompatDelegate.MODE_NIGHT_YES
         )
     }
 }

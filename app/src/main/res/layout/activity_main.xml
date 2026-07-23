@@ -239,6 +239,23 @@
             style="@style/HelpText"
             android:text="@string/help_charger" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/grace_label">
+
+            <AutoCompleteTextView
+                android:id="@+id/dropdownGrace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_grace" />
+
         <!-- Effekte -->
         <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
 
@@ -310,6 +327,27 @@
         <TextView
             style="@style/HelpText"
             android:text="@string/help_filter" />
+
+        <!-- Aussehen -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_design" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/theme_label">
+
+            <AutoCompleteTextView
+                android:id="@+id/dropdownTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPreview"

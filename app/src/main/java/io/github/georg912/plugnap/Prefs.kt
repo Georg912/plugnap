@@ -3,6 +3,7 @@ package io.github.georg912.plugnap
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 
 /** Einstellungen der App. Zeiten als Minuten seit Mitternacht (lokale Zeit). */
 class Prefs(context: Context) {
@@ -61,6 +62,16 @@ class Prefs(context: Context) {
     var skipUntil: Long
         get() = sp.getLong("skip_until", 0L)
         set(v) = sp.edit().putLong("skip_until", v).apply()
+
+    /** Karenz in Sekunden zwischen Abstecken und Deaktivieren (0 = sofort) */
+    var unplugGraceSec: Int
+        get() = sp.getInt("unplug_grace_sec", 30)
+        set(v) = sp.edit().putInt("unplug_grace_sec", v).apply()
+
+    /** App-Design: AppCompatDelegate.MODE_NIGHT_* */
+    var themeMode: Int
+        get() = sp.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        set(v) = sp.edit().putInt("theme_mode", v).apply()
 
     var grayscale: Boolean
         get() = sp.getBoolean("fx_grayscale", true)

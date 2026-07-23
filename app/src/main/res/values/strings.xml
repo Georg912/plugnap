@@ -31,6 +31,24 @@
     <string name="help_charger">Only the selected charger types trigger the mode — e.g. wireless on the nightstand yes, USB at the PC no.</string>
     <string name="charger_keep_one">At least one charger type must stay selected.</string>
 
+    <string name="grace_label">Turn off after unplugging</string>
+    <string-array name="grace_labels">
+        <item>Immediately</item>
+        <item>After 15 seconds</item>
+        <item>After 30 seconds</item>
+        <item>After 1 minute</item>
+        <item>After 2 minutes</item>
+    </string-array>
+    <string name="help_grace">Brief unplugging (repositioning the cable) won\'t end the mode.</string>
+
+    <string name="section_design">Appearance</string>
+    <string name="theme_label">App theme</string>
+    <string-array name="theme_labels">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
     <string name="skip_tonight">Skip tonight</string>
     <string name="resume_skip">Stop skipping</string>
     <string name="status_skipped">Skipped tonight (until %s).</string>

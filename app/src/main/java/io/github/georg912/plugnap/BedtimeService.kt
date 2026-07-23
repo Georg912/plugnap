@@ -44,10 +44,14 @@ class BedtimeService : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 Intent.ACTION_POWER_CONNECTED -> evaluate()
-                Intent.ACTION_POWER_DISCONNECTED ->
-                    if (Prefs(context).ruleActive) {
-                        handler.postDelayed(delayedOff, UNPLUG_GRACE_MS)
+                Intent.ACTION_POWER_DISCONNECTED -> {
+                    val prefs = Prefs(context)
+                    if (prefs.ruleActive) {
+                        val graceMs = prefs.unplugGraceSec * 1000L
+                        if (graceMs == 0L) delayedOff.run()
+                        else handler.postDelayed(delayedOff, graceMs)
                     }
+                }
                 AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED ->
                     AlarmScheduler.reschedule(context)
             }
@@ -171,7 +175,6 @@ class BedtimeService : Service() {
     companion object {
         private const val CHANNEL_ID = "bedtime_watch"
         private const val NOTIFICATION_ID = 1
-        private const val UNPLUG_GRACE_MS = 30_000L
 
         fun start(context: Context) {
             context.startForegroundService(Intent(context, BedtimeService::class.java))

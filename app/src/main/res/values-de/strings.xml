@@ -31,6 +31,24 @@
     <string name="help_charger">Nur die ausgewählten Ladearten lösen den Modus aus — z. B. kabellos am Nachtkästchen ja, USB am PC nein.</string>
     <string name="charger_keep_one">Mindestens eine Ladeart muss ausgewählt bleiben.</string>
 
+    <string name="grace_label">Beim Abstecken ausschalten</string>
+    <string-array name="grace_labels">
+        <item>Sofort</item>
+        <item>Nach 15 Sekunden</item>
+        <item>Nach 30 Sekunden</item>
+        <item>Nach 1 Minute</item>
+        <item>Nach 2 Minuten</item>
+    </string-array>
+    <string name="help_grace">Kurzes Umstecken (Kabel neu einstecken) beendet den Modus nicht.</string>
+
+    <string name="section_design">Aussehen</string>
+    <string name="theme_label">App-Design</string>
+    <string-array name="theme_labels">
+        <item>Wie System</item>
+        <item>Hell</item>
+        <item>Dunkel</item>
+    </string-array>
+
     <string name="skip_tonight">Heute aussetzen</string>
     <string name="resume_skip">Aussetzen beenden</string>
     <string name="status_skipped">Heute ausgesetzt (bis %s).</string>
