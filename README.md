@@ -1,5 +1,9 @@
 # PlugNap
 
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/Georg912/plugnap)](https://github.com/Georg912/plugnap/releases)
+[![Android 15+](https://img.shields.io/badge/Android-15%2B-3DDC84?logo=android&logoColor=white)](#limitations)
+
 > *Plug in. Nap well.* — 🇩🇪 [Deutsche Version](README.de.md)
 
 **Bedtime mode while charging — for Android 15+ (built for GrapheneOS on the Pixel).**

@@ -1,0 +1,30 @@
+# F-Droid build recipe for PlugNap.
+# Destination: fdroiddata repo as metadata/io.github.georg912.plugnap.yml
+# (this copy is kept here for reference/maintenance)
+
+Categories:
+  - System
+  - Time
+License: GPL-3.0-or-later
+AuthorName: Georg FJ Hufnagl
+SourceCode: https://github.com/Georg912/plugnap
+IssueTracker: https://github.com/Georg912/plugnap/issues
+Changelog: https://github.com/Georg912/plugnap/releases
+
+AutoName: PlugNap
+
+RepoType: git
+Repo: https://github.com/Georg912/plugnap.git
+
+Builds:
+  - versionName: 1.4.1
+    versionCode: 7
+    commit: v1.4.1
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.4.1
+CurrentVersionCode: 7
