@@ -9,16 +9,16 @@ android {
 
     defaultConfig {
         applicationId = "io.github.georg912.plugnap"
-        // ZenDeviceEffects / AutomaticZenRule.Builder gibt es erst ab Android 15 (API 35)
+        // ZenDeviceEffects / AutomaticZenRule.Builder only exist from Android 15 (API 35)
         minSdk = 35
         targetSdk = 35
         versionCode = 7
         versionName = "1.4.1"
     }
 
-    // Release-Signing: Keystore + Passwort liegen NICHT im Repo, sondern in
+    // Release signing: keystore + password are NOT in the repo but in
     // ~/.gradle/gradle.properties (ZENDOCK_KEYSTORE, ZENDOCK_KEYSTORE_PW,
-    // ZENDOCK_KEY_ALIAS). Ohne diese Properties wird unsigniert gebaut.
+    // ZENDOCK_KEY_ALIAS). Without these properties the build is unsigned.
     val ksPath = providers.gradleProperty("ZENDOCK_KEYSTORE").orNull
     if (ksPath != null) {
         signingConfigs {

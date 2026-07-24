@@ -11,16 +11,16 @@ import android.service.notification.ZenPolicy
 import android.util.Log
 
 /**
- * Verwaltet unsere AutomaticZenRule inklusive ZenDeviceEffects.
+ * Manages our AutomaticZenRule including its ZenDeviceEffects.
  *
- * Das ist der Kern der App: Seit Android 15 sind Graustufen, AOD-Unterdrückung,
- * Wallpaper-Dimmen und Dark Mode („Night Mode") über ZenDeviceEffects an eine
- * app-eigene Zen-Regel gebunden. Wir legen die Regel an und schalten sie per
- * setAutomaticZenRuleState — dafür genügt der „Bitte nicht stören"-Zugriff.
+ * This is the core of the app: since Android 15, grayscale, AOD suppression,
+ * wallpaper dimming and dark mode ("night mode") are bound to an app-owned
+ * zen rule via ZenDeviceEffects. We create the rule and toggle it through
+ * setAutomaticZenRuleState — plain Do Not Disturb access is all that takes.
  */
 object ZenRuleManager {
 
-    private const val TAG = "ZenDock"
+    private const val TAG = "PlugNap"
     val CONDITION_URI: Uri = Uri.parse("condition://io.github.georg912.plugnap/charging-bedtime")
 
     fun hasDndAccess(context: Context): Boolean =
@@ -28,8 +28,8 @@ object ZenRuleManager {
             .isNotificationPolicyAccessGranted
 
     /**
-     * Legt die Regel an bzw. aktualisiert die Effekte nach den aktuellen
-     * Einstellungen. Gibt die Regel-ID zurück, oder null ohne DND-Zugriff.
+     * Creates the rule or updates its effects to the current settings.
+     * Returns the rule id, or null without DND access.
      */
     fun ensureRule(context: Context): String? {
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -43,8 +43,8 @@ object ZenRuleManager {
             .setShouldUseNightMode(prefs.nightMode)
             .build()
 
-        // Sinnvolle Bedtime-Richtlinie: Wecker & Medien erlaubt, Anrufe nur von
-        // markierten Kontakten bzw. wiederholten Anrufern.
+        // Sensible bedtime policy: alarms & media allowed, calls only from
+        // starred contacts or repeat callers.
         val policy = ZenPolicy.Builder()
             .allowAlarms(true)
             .allowMedia(true)
@@ -78,12 +78,12 @@ object ZenRuleManager {
                 nm.addAutomaticZenRule(rule).also { prefs.ruleId = it }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Zen-Regel konnte nicht angelegt/aktualisiert werden", e)
+            Log.e(TAG, "Failed to create/update zen rule", e)
             null
         }
     }
 
-    /** Aktiviert oder deaktiviert die Regel (Ladegerät an/ab). */
+    /** Activates or deactivates the rule (charger in/out). */
     fun setActive(context: Context, active: Boolean) {
         val nm = context.getSystemService(NotificationManager::class.java)
         val id = ensureRule(context) ?: return
@@ -99,13 +99,13 @@ object ZenRuleManager {
         try {
             nm.setAutomaticZenRuleState(id, condition)
             Prefs(context).ruleActive = active
-            Log.i(TAG, "Zen-Regel ${if (active) "aktiviert" else "deaktiviert"}")
+            Log.i(TAG, "Zen rule ${if (active) "activated" else "deactivated"}")
         } catch (e: Exception) {
-            Log.e(TAG, "Zen-Regel-Zustand konnte nicht gesetzt werden", e)
+            Log.e(TAG, "Failed to set zen rule state", e)
         }
     }
 
-    /** Entfernt die Regel vollständig (beim Deaktivieren der App). */
+    /** Removes the rule entirely (when the app is disabled). */
     fun removeRule(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
         if (!nm.isNotificationPolicyAccessGranted) return

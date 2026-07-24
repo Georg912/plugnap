@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
- * Die von der Fensterlogik benötigten Einstellungen — als Interface, damit
- * die Logik ohne Android-Abhängigkeiten (JVM-Unit-Tests!) prüfbar bleibt.
- * [Prefs] implementiert dieses Interface.
+ * The settings the window logic needs — as an interface so the logic stays
+ * testable without Android dependencies (plain JVM unit tests).
+ * [Prefs] implements this interface.
  */
 interface ScheduleParams {
     val allDay: Boolean
@@ -20,9 +20,9 @@ interface ScheduleParams {
 }
 
 /**
- * Tagesabhängige Fensterberechnung: normales Nachtfenster, optional eigene
- * Wochenend-Zeiten (Nächte Fr→Sa und Sa→So), Mitternachtsüberlauf inklusive.
- * Ein "Fenster" gehört immer zu dem Tag, an dessen Abend es beginnt.
+ * Day-aware window math: regular night window, optional separate weekend
+ * times (Friday and Saturday nights), midnight rollover included.
+ * A "window" always belongs to the day on whose evening it starts.
  */
 object Schedule {
 
@@ -37,7 +37,7 @@ object Schedule {
     private fun endMinute(date: LocalDate, p: ScheduleParams) =
         if (p.weekendEnabled && isWeekendNight(date)) p.weekendEnd else p.windowEnd
 
-    /** Fenster der Nacht, die am Abend von [date] beginnt (leer, wenn Start == Ende). */
+    /** Window of the night starting on the evening of [date] (empty if start == end). */
     fun windowFor(date: LocalDate, p: ScheduleParams): Window {
         val s = startMinute(date, p)
         val e = endMinute(date, p)
@@ -47,7 +47,7 @@ object Schedule {
         return Window(start, end)
     }
 
-    /** Das Fenster, in dem [now] gerade liegt — oder null. */
+    /** The window [now] currently falls into — or null. */
     fun currentWindow(now: LocalDateTime, p: ScheduleParams): Window? =
         listOf(now.toLocalDate().minusDays(1), now.toLocalDate())
             .map { windowFor(it, p) }
@@ -75,7 +75,7 @@ object Schedule {
     fun toEpochMillis(dt: LocalDateTime): Long =
         dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-    /** Bis wann "Heute aussetzen" gelten soll. */
+    /** Until when "skip tonight" should last. */
     fun skipUntilMillis(p: ScheduleParams): Long =
         if (p.allDay) System.currentTimeMillis() + 8 * 3600_000L
         else toEpochMillis(nextEnd(LocalDateTime.now(), p))

@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-/** Einstellungen der App. Zeiten als Minuten seit Mitternacht (lokale Zeit). */
+/** App settings. Times are minutes since midnight (local time). */
 class Prefs(context: Context) : ScheduleParams {
     private val sp: SharedPreferences =
         context.getSharedPreferences("zendock", Context.MODE_PRIVATE)
@@ -14,7 +14,7 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getBoolean("enabled", false)
         set(v) = sp.edit().putBoolean("enabled", v).apply()
 
-    /** true = Ladetrigger gilt rund um die Uhr, kein Zeitfenster */
+    /** true = the charging trigger applies around the clock, no window */
     override var allDay: Boolean
         get() = sp.getBoolean("all_day", false)
         set(v) = sp.edit().putBoolean("all_day", v).apply()
@@ -27,7 +27,7 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getInt("window_end", 7 * 60)
         set(v) = sp.edit().putInt("window_end", v).apply()
 
-    /** Eigene Zeiten für die Nächte Fr→Sa und Sa→So */
+    /** Separate times for Friday and Saturday nights */
     override var weekendEnabled: Boolean
         get() = sp.getBoolean("weekend_enabled", false)
         set(v) = sp.edit().putBoolean("weekend_enabled", v).apply()
@@ -40,7 +40,7 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getInt("weekend_end", 8 * 60)
         set(v) = sp.edit().putInt("weekend_end", v).apply()
 
-    /** Welche Ladearten den Modus auslösen dürfen */
+    /** Which charger types may trigger the mode */
     var plugAc: Boolean
         get() = sp.getBoolean("plug_ac", true)
         set(v) = sp.edit().putBoolean("plug_ac", v).apply()
@@ -53,32 +53,32 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getBoolean("plug_wireless", true)
         set(v) = sp.edit().putBoolean("plug_wireless", v).apply()
 
-    /** Modus schon beim nächsten Wecker beenden statt erst am Fensterende */
+    /** End the mode at the next alarm clock instead of the window end */
     var endAtAlarm: Boolean
         get() = sp.getBoolean("end_at_alarm", false)
         set(v) = sp.edit().putBoolean("end_at_alarm", v).apply()
 
-    /** "Heute aussetzen": bis zu diesem Zeitpunkt (Epoch-Millis) nicht aktivieren */
+    /** "Skip tonight": don't activate until this instant (epoch millis) */
     var skipUntil: Long
         get() = sp.getLong("skip_until", 0L)
         set(v) = sp.edit().putLong("skip_until", v).apply()
 
-    /** Karenz in Sekunden zwischen Abstecken und Deaktivieren (0 = sofort) */
+    /** Grace period in seconds between unplugging and deactivation (0 = immediately) */
     var unplugGraceSec: Int
         get() = sp.getInt("unplug_grace_sec", 30)
         set(v) = sp.edit().putInt("unplug_grace_sec", v).apply()
 
-    /** Verzögerung in Sekunden zwischen Anstecken und Aktivieren (0 = sofort) */
+    /** Delay in seconds between plugging in and activation (0 = immediately) */
     var plugInDelaySec: Int
         get() = sp.getInt("plugin_delay_sec", 0)
         set(v) = sp.edit().putInt("plugin_delay_sec", v).apply()
 
-    /** Status-Benachrichtigung des Wächters ausblenden (Kanal ohne Wichtigkeit) */
+    /** Hide the watcher's status notification (importance-less channel) */
     var hideNotification: Boolean
         get() = sp.getBoolean("hide_notification", false)
         set(v) = sp.edit().putBoolean("hide_notification", v).apply()
 
-    /** App-Design: AppCompatDelegate.MODE_NIGHT_* */
+    /** App theme: AppCompatDelegate.MODE_NIGHT_* */
     var themeMode: Int
         get() = sp.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         set(v) = sp.edit().putInt("theme_mode", v).apply()
@@ -104,12 +104,12 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getInt("filter", NotificationManager.INTERRUPTION_FILTER_PRIORITY)
         set(v) = sp.edit().putInt("filter", v).apply()
 
-    /** Vom System vergebene Regel-ID unserer AutomaticZenRule */
+    /** System-assigned id of our AutomaticZenRule */
     var ruleId: String?
         get() = sp.getString("rule_id", null)
         set(v) = sp.edit().putString("rule_id", v).apply()
 
-    /** Merker, ob die Regel gerade von uns aktiviert wurde (für Statusanzeige) */
+    /** Whether we currently have the rule activated (for status display) */
     var ruleActive: Boolean
         get() = sp.getBoolean("rule_active", false)
         set(v) = sp.edit().putBoolean("rule_active", v).apply()

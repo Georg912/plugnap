@@ -1,15 +1,18 @@
 # Contributing
 
-Danke für dein Interesse! / Thanks for your interest!
+Thanks for your interest! / Danke für dein Interesse!
 
-- **Bugs & Ideen:** Bitte als GitHub-Issue melden — mit Gerät, Android-
-  Version und (bei Abstürzen) einem Logcat-Auszug (`adb logcat -s ZenDock:*`).
-- **Pull Requests:** Gerne! Bitte vorher ein Issue aufmachen, damit wir
-  Doppelarbeit vermeiden. Ein PR pro logischer Änderung.
-- **Code-Stil:** Kotlin, wie im Bestand — kommentiert wird das Warum, nicht
-  das Was. Keine neuen Abhängigkeiten ohne guten Grund; die App bleibt ohne
-  Internet-Berechtigung, ohne Tracker und ohne Google-Dienste.
-- **Bauen:** `./gradlew assembleDebug` — braucht JDK 17+ und Android SDK
-  Platform 35. Details in der README.
-- **Lizenz:** Mit einem Beitrag stimmst du zu, dass er unter GPL-3.0-or-later
-  veröffentlicht wird.
+- **Bugs & ideas:** please file a GitHub issue — including device, Android
+  version and (for crashes) a logcat excerpt (`adb logcat -s PlugNap:*`).
+- **Pull requests:** welcome! Please open an issue first so we avoid
+  duplicate work. One PR per logical change.
+- **Code style:** Kotlin, as in the existing code — comments explain the
+  *why*, not the *what*. No new dependencies without a good reason; the app
+  stays free of internet permission, trackers and Google services.
+- **Building:** `./gradlew assembleDebug` — needs JDK 17+ and Android SDK
+  Platform 35. `./gradlew test` runs the JVM unit tests. Details in the
+  README.
+- **Language:** code, commits and issues in English; the app UI and store
+  metadata are also maintained in German.
+- **License:** by contributing you agree that your contribution is released
+  under GPL-3.0-or-later.

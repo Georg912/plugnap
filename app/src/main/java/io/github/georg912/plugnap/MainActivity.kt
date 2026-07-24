@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // --- Berechtigungen ---
+        // --- Permissions ---
         findViewById<MaterialButton>(R.id.btnDndAccess).setOnClickListener {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
         }
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        // --- Hauptschalter ---
+        // --- Main switch ---
         val master = findViewById<MaterialSwitch>(R.id.switchEnabled)
         master.isChecked = prefs.enabled
         master.setOnCheckedChangeListener { _, checked ->
@@ -71,14 +71,14 @@ class MainActivity : AppCompatActivity() {
             applyConfiguration()
         }
 
-        // --- Heute aussetzen ---
+        // --- Skip tonight ---
         findViewById<MaterialButton>(R.id.btnSkip).setOnClickListener {
             prefs.skipUntil =
                 if (skipActive()) 0L else Schedule.skipUntilMillis(prefs)
             applyConfiguration()
         }
 
-        // --- Zeitfenster ---
+        // --- Night window ---
         val allDay = findViewById<MaterialSwitch>(R.id.switchAllDay)
         allDay.isChecked = prefs.allDay
         allDay.setOnCheckedChangeListener { _, checked ->
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             pickTime(prefs.windowEnd) { prefs.windowEnd = it; applyConfiguration() }
         }
 
-        // --- Wochenende ---
+        // --- Weekend ---
         val weekend = findViewById<MaterialSwitch>(R.id.switchWeekend)
         weekend.isChecked = prefs.weekendEnabled
         weekend.setOnCheckedChangeListener { _, checked ->
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             pickTime(prefs.weekendEnd) { prefs.weekendEnd = it; applyConfiguration() }
         }
 
-        // --- Wecker-Ende ---
+        // --- End at alarm ---
         val endAtAlarm = findViewById<MaterialSwitch>(R.id.switchEndAtAlarm)
         endAtAlarm.isChecked = prefs.endAtAlarm
         endAtAlarm.setOnCheckedChangeListener { _, checked ->
@@ -114,43 +114,43 @@ class MainActivity : AppCompatActivity() {
             applyConfiguration()
         }
 
-        // --- Ladearten ---
+        // --- Charger types ---
         bindPlugType(R.id.cbAc, { prefs.plugAc }, { prefs.plugAc = it })
         bindPlugType(R.id.cbUsb, { prefs.plugUsb }, { prefs.plugUsb = it })
         bindPlugType(R.id.cbWireless, { prefs.plugWireless }, { prefs.plugWireless = it })
 
-        // --- Effekte ---
+        // --- Effects ---
         bindEffect(R.id.switchGrayscale, prefs.grayscale) { prefs.grayscale = it }
         bindEffect(R.id.switchAmbient, prefs.suppressAmbient) { prefs.suppressAmbient = it }
         bindEffect(R.id.switchDimWallpaper, prefs.dimWallpaper) { prefs.dimWallpaper = it }
         bindEffect(R.id.switchNightMode, prefs.nightMode) { prefs.nightMode = it }
 
-        // --- DND-Filter ---
+        // --- DND filter ---
         bindDropdown(R.id.dropdownFilter, R.array.filter_labels, FILTERS,
             prefs.interruptionFilter) {
             prefs.interruptionFilter = it
             applyConfiguration()
         }
 
-        // --- Anstecke-Verzögerung & Abstecke-Karenz ---
+        // --- Plug-in delay & unplug grace ---
         bindDropdown(R.id.dropdownPlugDelay, R.array.plug_delay_labels, PLUG_DELAY_VALUES,
             prefs.plugInDelaySec) { prefs.plugInDelaySec = it }
         bindDropdown(R.id.dropdownGrace, R.array.grace_labels, GRACE_VALUES,
             prefs.unplugGraceSec) { prefs.unplugGraceSec = it }
 
-        // --- Benachrichtigung ausblenden ---
+        // --- Hide notification ---
         val hideNotif = findViewById<MaterialSwitch>(R.id.switchHideNotification)
         hideNotif.isChecked = prefs.hideNotification
         hideNotif.setOnCheckedChangeListener { _, checked ->
             prefs.hideNotification = checked
-            // Service neu starten, damit die Notification auf den anderen
-            // Kanal wechselt (sichtbar <-> verborgen).
+            // Restart the service so the notification moves to the other
+            // channel (visible <-> hidden).
             BedtimeService.stop(this)
             applyConfiguration()
             if (checked) {
-                // Android hebt die Wichtigkeit von FGS-Kanälen selbst wieder
-                // an — nur eine NUTZER-Blockade des Kanals ist endgültig.
-                // Also direkt dorthin führen.
+                // Android bumps the importance of FGS channels back up on its
+                // own — only a USER block of the channel is final. So lead
+                // straight there.
                 startActivity(
                     Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                         .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
@@ -159,14 +159,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // --- App-Design ---
+        // --- App theme ---
         bindDropdown(R.id.dropdownTheme, R.array.theme_labels, THEME_VALUES,
             prefs.themeMode) {
             prefs.themeMode = it
             AppCompatDelegate.setDefaultNightMode(it)
         }
 
-        // --- Test ---
+        // --- Preview ---
         findViewById<MaterialButton>(R.id.btnPreview).setOnClickListener { runPreview() }
         findViewById<MaterialButton>(R.id.btnModeSettings).setOnClickListener {
             openModeSettings()
@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun skipActive() = System.currentTimeMillis() < prefs.skipUntil
 
-    /** Nach jeder Einstellungsänderung: Regel, Alarme und Service anpassen. */
+    /** After every settings change: adjust rule, alarms and service. */
     private fun applyConfiguration() {
         if (prefs.enabled && ZenRuleManager.hasDndAccess(this)) {
             ZenRuleManager.ensureRule(this)
@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity() {
             ZenRuleManager.setActive(this, false)
         }
         updateStatus()
-        // Der Service aktiviert die Regel asynchron — Status kurz danach auffrischen.
+        // The service activates the rule asynchronously — refresh shortly after.
         handler.postDelayed({ updateStatus() }, 1200)
     }
 
@@ -216,12 +216,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Verdrahtet ein Dropdown mit Label-Array und zugehörigen Werten.
+     * Wires up a dropdown with a label array and matching values.
      *
-     * Wichtig: nicht-filternder Adapter + Zuordnung über den Label-Text.
-     * Nach einer Activity-Neuerstellung (z. B. Theme-Wechsel) stellt Android
-     * den Feldtext wieder her und der Standard-Adapter filtert die Liste auf
-     * den passenden Eintrag zusammen — dann stimmen Positionen nicht mehr.
+     * Important: non-filtering adapter + label-based mapping. After an
+     * activity re-creation (e.g. theme switch) Android restores the field
+     * text and the default adapter filters the list down to the matching
+     * entry — positions no longer line up then.
      */
     private fun bindDropdown(
         id: Int, labelsRes: Int, values: IntArray, current: Int, save: (Int) -> Unit
@@ -241,8 +241,8 @@ class MainActivity : AppCompatActivity() {
         cb.isChecked = get()
         cb.setOnCheckedChangeListener { _, checked ->
             if (!checked) {
-                // Mindestens eine Ladeart muss aktiv bleiben (prefs hält hier
-                // noch den alten Wert, daher -1 für die gerade abgewählte).
+                // At least one charger type must stay enabled (prefs still
+                // holds the old value here, hence -1 for the one deselected).
                 val remaining = listOf(prefs.plugAc, prefs.plugUsb, prefs.plugWireless)
                     .count { it } - 1
                 if (remaining < 1) {
@@ -268,7 +268,7 @@ class MainActivity : AppCompatActivity() {
         picker.show(supportFragmentManager, "time")
     }
 
-    /** Aktiviert die Effekte 15 Sekunden lang zur Vorschau. */
+    /** Activates the effects for a 15-second preview. */
     private fun runPreview() {
         if (!ZenRuleManager.hasDndAccess(this)) {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))

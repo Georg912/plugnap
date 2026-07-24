@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
- * Plant die täglichen Alarme für Fensterstart und Fensterende.
+ * Schedules the daily alarms for window start and window end.
  *
- * Exakte Alarme sind hier nicht nur Kosmetik: Nur der Empfang eines exakten
- * Alarms erlaubt es, den Foreground-Service aus dem Hintergrund zu starten
- * (FGS-Background-Start-Exemption seit Android 12).
+ * Exact alarms are not just cosmetics here: only receiving an exact alarm
+ * permits starting the foreground service from the background
+ * (FGS background-start exemption since Android 12).
  */
 object AlarmScheduler {
 
@@ -24,7 +24,7 @@ object AlarmScheduler {
     fun canScheduleExact(context: Context): Boolean =
         context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
 
-    /** Plant beide Alarme neu (idempotent). Bei allDay/deaktiviert: alles absagen. */
+    /** Reschedules both alarms (idempotent). Cancels everything for allDay/disabled. */
     fun reschedule(context: Context) {
         val prefs = Prefs(context)
         val am = context.getSystemService(AlarmManager::class.java)
@@ -43,8 +43,8 @@ object AlarmScheduler {
     }
 
     /**
-     * Reguläres Fensterende — oder früher, wenn "Beim Wecker beenden" aktiv ist
-     * und der nächste Wecker noch innerhalb des Fensters klingelt.
+     * Regular window end — or earlier if "end at alarm" is enabled and the
+     * next alarm clock rings while still inside the window.
      */
     private fun effectiveEnd(now: LocalDateTime, prefs: Prefs, am: AlarmManager): LocalDateTime {
         val end = Schedule.nextEnd(now, prefs)
@@ -60,8 +60,8 @@ object AlarmScheduler {
         if (am.canScheduleExactAlarms()) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi)
         } else {
-            // Fallback: ungenau (±10 min); der FGS-Start kann dann vom System
-            // verweigert werden — die App bittet deshalb im UI um die Berechtigung.
+            // Fallback: inexact (±10 min); the system may then refuse the FGS
+            // start — which is why the UI asks for the permission.
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi)
         }
     }

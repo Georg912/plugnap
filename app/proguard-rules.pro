@@ -1,1 +1,1 @@
-# Keine besonderen Regeln nötig — Standard-Optimierung reicht.
+# No special rules needed — default optimization is sufficient.

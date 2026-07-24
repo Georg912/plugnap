@@ -22,25 +22,25 @@ import java.time.LocalDateTime
 import java.util.Locale
 
 /**
- * Lauscht während des Bedtime-Fensters auf ACTION_POWER_CONNECTED/DISCONNECTED.
+ * Listens for ACTION_POWER_CONNECTED/DISCONNECTED during the bedtime window.
  *
- * Warum ein Foreground-Service? Seit Android 8 können diese Broadcasts nicht
- * mehr im Manifest registriert werden — es braucht einen laufenden Prozess.
- * Der Service läuft nur innerhalb des konfigurierten Fensters (bzw. dauerhaft
- * im „ganztägig"-Modus) und ist ansonsten gestoppt.
+ * Why a foreground service? Since Android 8 these broadcasts can no longer be
+ * registered in the manifest — a running process is required. The service only
+ * runs inside the configured window (or permanently in "any time of day"
+ * mode) and is stopped otherwise.
  */
 class BedtimeService : Service() {
 
     private var receiverRegistered = false
     private val handler = Handler(Looper.getMainLooper())
 
-    // Karenz beim Abstecken: kurzes Umstecken beendet den Modus nicht.
+    // Unplug grace period: briefly repositioning the cable doesn't end the mode.
     private val delayedOff = Runnable {
         ZenRuleManager.setActive(this, false)
         updateNotification()
     }
 
-    // Verzögerte Aktivierung: kurzes Zwischenladen löst den Modus nicht aus.
+    // Delayed activation: a quick top-up charge doesn't trigger the mode.
     private val delayedOn = Runnable {
         evaluate()
         updateNotification()
@@ -96,7 +96,7 @@ class BedtimeService : Service() {
             return START_NOT_STICKY
         }
         if (!prefs.allDay && Schedule.currentWindow(LocalDateTime.now(), prefs) == null) {
-            // Außerhalb des Fensters gestartet (Race beim Boot o. Ä.) → beenden
+            // Started outside the window (boot race etc.) -> shut down
             ZenRuleManager.setActive(this, false)
             stopSelf()
             return START_NOT_STICKY
@@ -106,7 +106,7 @@ class BedtimeService : Service() {
         return START_STICKY
     }
 
-    /** Soll der Modus gerade an sein? (Ladeart, Aussetzen, Ladezustand) */
+    /** Should the mode be on right now? (charger type, skip, charging state) */
     private fun evaluate() {
         val prefs = Prefs(this)
         val skipped = System.currentTimeMillis() < prefs.skipUntil
@@ -115,7 +115,7 @@ class BedtimeService : Service() {
         ZenRuleManager.setActive(this, shouldBeOn)
     }
 
-    /** Lädt das Gerät gerade über eine erlaubte Ladeart? */
+    /** Is the device currently charging via an allowed charger type? */
     private fun currentPlugAllowed(prefs: Prefs): Boolean {
         val plugged = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             ?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0
@@ -147,8 +147,8 @@ class BedtimeService : Service() {
                 NotificationManager.IMPORTANCE_MIN
             ).apply { setShowBadge(false) }
         )
-        // Kanal ohne Wichtigkeit: Der FGS läuft, aber Android zeigt keine
-        // Benachrichtigung an — die App-eigene "ausblenden"-Option.
+        // Channel with no importance: the FGS keeps running, but Android shows
+        // no notification — the app's own "hide" option.
         nm.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_HIDDEN,

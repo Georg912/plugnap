@@ -6,8 +6,8 @@ import android.content.Intent
 import android.util.Log
 
 /**
- * Empfängt Fensterstart/-ende und die "Heute aussetzen"-Aktion aus der
- * Benachrichtigung; plant danach jeweils die nächsten Alarme.
+ * Receives window start/end and the "skip tonight" action from the
+ * notification; reschedules the next alarms afterwards.
  */
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -19,22 +19,22 @@ class AlarmReceiver : BroadcastReceiver() {
                     try {
                         BedtimeService.start(context)
                     } catch (e: Exception) {
-                        // z. B. ForegroundServiceStartNotAllowedException bei
-                        // ungenauem Alarm ohne Exact-Alarm-Berechtigung
-                        Log.e("ZenDock", "Service-Start am Fensterbeginn fehlgeschlagen", e)
+                        // e.g. ForegroundServiceStartNotAllowedException for an
+                        // inexact alarm without the exact-alarm permission
+                        Log.e("PlugNap", "Failed to start service at window start", e)
                     }
                 }
             }
             AlarmScheduler.ACTION_WINDOW_END -> {
-                // Deaktivieren geht auch ohne laufenden Service direkt hier.
+                // Deactivating works right here, even without a running service.
                 ZenRuleManager.setActive(context, false)
                 context.stopService(Intent(context, BedtimeService::class.java))
             }
             AlarmScheduler.ACTION_SKIP_TONIGHT -> {
                 prefs.skipUntil = Schedule.skipUntilMillis(prefs)
                 ZenRuleManager.setActive(context, false)
-                // Laufenden Service anstoßen, damit die Notification den
-                // Aussetzen-Status anzeigt (Service ist bereits Foreground).
+                // Nudge the running service so the notification shows the
+                // skip state (the service is already foreground).
                 try {
                     BedtimeService.start(context)
                 } catch (_: Exception) {

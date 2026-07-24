@@ -7,17 +7,17 @@ import android.util.Log
 import java.time.LocalDateTime
 
 /**
- * Stellt nach Boot, Zeitzonenwechsel oder App-Update die Alarme wieder her und
- * startet den Service, falls wir uns gerade im Bedtime-Fenster befinden.
- * (BOOT_COMPLETED darf einen specialUse-FGS starten — die Android-15-
- * Einschränkung betrifft nur bestimmte andere FGS-Typen.)
+ * Restores the alarms after boot, timezone change or app update, and starts
+ * the service if we are currently inside the bedtime window.
+ * (BOOT_COMPLETED may start a specialUse FGS — the Android 15 restriction
+ * only covers certain other FGS types.)
  */
 class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Nur die erwarteten System-Actions akzeptieren — der Receiver ist
-        // exportiert (für BOOT_COMPLETED nötig) und sonst per explizitem
-        // Intent von Dritt-Apps auslösbar.
+        // Only accept the expected system actions — the receiver is exported
+        // (required for BOOT_COMPLETED) and could otherwise be triggered by
+        // third-party apps via explicit intents.
         if (intent.action !in setOf(
                 Intent.ACTION_BOOT_COMPLETED,
                 Intent.ACTION_TIMEZONE_CHANGED,
@@ -31,7 +31,7 @@ class BootReceiver : BroadcastReceiver() {
             try {
                 BedtimeService.start(context)
             } catch (e: Exception) {
-                Log.e("ZenDock", "Service-Start nach Boot fehlgeschlagen", e)
+                Log.e("PlugNap", "Failed to start service after boot", e)
             }
         }
     }

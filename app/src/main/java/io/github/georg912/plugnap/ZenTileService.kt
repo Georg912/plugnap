@@ -6,9 +6,9 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 
 /**
- * Quick-Settings-Kachel: schaltet den Schlafmodus manuell an/aus —
- * unabhängig vom Ladetrigger. Ein manuell aktivierter Modus wird trotzdem
- * am Fensterende (bzw. beim Abstecken, falls der Service läuft) beendet.
+ * Quick-settings tile: toggles the bedtime mode manually — independent of
+ * the charging trigger. A manually activated mode is still ended at the
+ * window end (or on unplug while the service is running).
  */
 class ZenTileService : TileService() {
 
@@ -16,7 +16,7 @@ class ZenTileService : TileService() {
 
     override fun onClick() {
         if (!ZenRuleManager.hasDndAccess(this)) {
-            // Ohne DND-Zugriff: App öffnen, dort lässt er sich erteilen.
+            // Without DND access: open the app, where it can be granted.
             val pi = PendingIntent.getActivity(
                 this, 0,
                 Intent(this, MainActivity::class.java)

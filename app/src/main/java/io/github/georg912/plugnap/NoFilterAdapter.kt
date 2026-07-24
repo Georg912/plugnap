@@ -5,14 +5,13 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 
 /**
- * ArrayAdapter, dessen Filter immer die komplette Liste liefert.
+ * ArrayAdapter whose filter always returns the complete list.
  *
- * REGRESSION-HINWEIS: Der Standard-Adapter filtert nach einer Activity-
- * Neuerstellung (z. B. Theme-Wechsel) die Dropdown-Liste auf den
- * wiederhergestellten Feldtext zusammen — dann ist nur noch ein Eintrag
- * wählbar und Positions-Indizes stimmen nicht mehr. Deshalb: niemals
- * filtern, und die Auswahl immer über [labelToValue] statt über die
- * Popup-Position auflösen.
+ * REGRESSION NOTE: after an activity re-creation (e.g. theme switch) the
+ * default adapter filters the dropdown list down to the restored field
+ * text — only one entry remains selectable and position indices no longer
+ * line up. Therefore: never filter, and always resolve the selection via
+ * [labelToValue] instead of the popup position.
  */
 internal class NoFilterAdapter(context: Context, items: Array<String>) :
     ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, items) {
@@ -29,8 +28,8 @@ internal class NoFilterAdapter(context: Context, items: Array<String>) :
 }
 
 /**
- * Ordnet ein angeklicktes Dropdown-Label dem zugehörigen Wert zu —
- * unabhängig von der (potenziell gefilterten) Popup-Position.
+ * Maps a tapped dropdown label to its value — independent of the
+ * (potentially filtered) popup position.
  */
 internal fun labelToValue(labels: Array<String>, values: IntArray, label: String): Int =
     values[labels.indexOf(label).coerceAtLeast(0)]

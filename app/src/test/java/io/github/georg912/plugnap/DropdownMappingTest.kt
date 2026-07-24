@@ -4,11 +4,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
- * Regressionstest für den Dropdown-Bug aus v1.4.0: Nach einer Activity-
- * Neuerstellung (Theme-Wechsel) filterte der Standard-Adapter die Liste auf
- * einen Eintrag zusammen, und die Positions-basierte Zuordnung setzte dann
- * den falschen Wert (Position 0 der gefilterten Liste = erster Array-Wert).
- * Die Zuordnung muss deshalb IMMER über den Label-Text laufen.
+ * Regression test for the dropdown bug from v1.4.0: after an activity
+ * re-creation (theme switch) the default adapter filtered the list down to a
+ * single entry, and the position-based mapping then applied the wrong value
+ * (position 0 of the filtered list = first array value). The mapping must
+ * therefore ALWAYS resolve via the label text.
  */
 class DropdownMappingTest {
 
@@ -16,13 +16,13 @@ class DropdownMappingTest {
     private val values = intArrayOf(-1, 1, 2)  // AppCompatDelegate.MODE_NIGHT_*
 
     @Test
-    fun `Label wird unabhaengig von der Position aufgeloest`() {
+    fun `label resolves independently of its position`() {
         assertEquals(2, labelToValue(labels, values, "Dark"))
         assertEquals(1, labelToValue(labels, values, "Light"))
         assertEquals(-1, labelToValue(labels, values, "Follow system"))
     }
 
     @Test
-    fun `unbekanntes Label faellt auf ersten Wert zurueck statt zu crashen`() =
-        assertEquals(-1, labelToValue(labels, values, "gibt es nicht"))
+    fun `unknown label falls back to the first value instead of crashing`() =
+        assertEquals(-1, labelToValue(labels, values, "does not exist"))
 }
