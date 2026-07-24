@@ -93,7 +93,7 @@ mit „Effekte 15 Sekunden testen" prüfen.
 
 ## Lizenz
 
-Copyright © 2026 Georg Hufnagl.
+Copyright © 2026 Georg FJ Hufnagl.
 
 Dieses Programm ist freie Software: Weitergabe und Veränderung unter den
 Bedingungen der **GNU General Public License, Version 3 oder später**
