@@ -1,102 +1,114 @@
 # PlugNap
 
-> *Ladenschluss für dein Handy.*
+> *Plug in. Nap well.* — 🇩🇪 [Deutsche Version](README.de.md)
 
-**Bedtime-Modus beim Laden — für Android 15+ (gebaut für GrapheneOS auf dem Pixel).**
+**Bedtime mode while charging — for Android 15+ (built for GrapheneOS on the Pixel).**
 
 <p>
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" alt="Hauptbildschirm">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Einstellungen">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" alt="Main screen">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Settings">
 </p>
 
-PlugNap schließt eine Lücke, die bisher nur das proprietäre Tasker abdeckte:
-Es legt eine app-eigene `AutomaticZenRule` mit **`ZenDeviceEffects`** an und
-aktiviert sie, sobald das Ladegerät angesteckt wird — inklusive der
-Bildschirmeffekte, die sonst nur der System-Zeitplan schalten kann:
+PlugNap fills a gap that only the proprietary Tasker used to cover: it
+registers its own `AutomaticZenRule` with **`ZenDeviceEffects`** and
+activates it the moment you plug in the charger — including the screen
+effects that otherwise only the system schedule can switch:
 
-- **Graustufen** (`setShouldDisplayGrayscale`)
-- **Always-on-Display aus** (`setShouldSuppressAmbientDisplay`)
-- **Wallpaper dimmen** (`setShouldDimWallpaper`)
-- **Dunkles Design** (`setShouldUseNightMode`)
+- **Grayscale** (`setShouldDisplayGrayscale`)
+- **Always-on display off** (`setShouldSuppressAmbientDisplay`)
+- **Dim wallpaper** (`setShouldDimWallpaper`)
+- **Dark theme** (`setShouldUseNightMode`)
 
-Beim Abstecken (oder am Ende des Nachtfensters) wird der Modus wieder
-deaktiviert.
+Unplug — or let the night window end — and everything switches back.
 
-## Funktionsweise
+## Features
 
-- Ein **Nachtfenster** (Standard 21:00–07:00) wird über exakte Alarme
-  begrenzt. Nur innerhalb des Fensters läuft ein kleiner Foreground-Service,
-  der auf `ACTION_POWER_CONNECTED`/`DISCONNECTED` lauscht (diese Broadcasts
-  sind seit Android 8 nicht mehr im Manifest registrierbar).
-- Ladegerät an → Zen-Regel aktiv (DND + Effekte). Ladegerät ab → Regel aus.
-- Die Regel erscheint als eigener **Modus** in den Systemeinstellungen
-  („Bitte nicht stören"/Modi) und kann dort auch manuell geschaltet und
-  feinjustiert werden.
-- Optional: „Zu jeder Tageszeit auslösen" (kein Zeitfenster).
+- Configurable **night window** (default 21:00–07:00), separate weekend
+  times for Friday/Saturday nights, or round-the-clock triggering
+- **Charger-type filter** (power adapter / USB / wireless), activation
+  delay (0–10 min) and unplug grace period (0 s–2 min)
+- **"Skip tonight"** in the app and in the notification, **end at your
+  next alarm clock**, quick-settings tile, 15-second effect preview
+- Notification-filter choice (Priority / Alarms only / Total silence),
+  app theme (system/light/dark), hideable status notification
 
-## Benötigte Berechtigungen
+## How it works
 
-| Berechtigung | Wozu |
+- The night window is bounded by **exact alarms**. Only inside the window
+  does a small foreground service run, listening for
+  `ACTION_POWER_CONNECTED`/`DISCONNECTED` (these broadcasts cannot be
+  manifest-registered since Android 8).
+- Charger in → zen rule active (DND + effects). Charger out → rule off.
+- The rule shows up as a regular **mode** in the system settings
+  (Do Not Disturb / Modes) where it can also be toggled and fine-tuned
+  manually.
+- Everything is event-driven — no polling, no measurable battery impact,
+  and the app has **no internet permission at all**.
+
+## Required permissions
+
+| Permission | Why |
 |---|---|
-| „Bitte nicht stören"-Zugriff | `AutomaticZenRule` + `ZenDeviceEffects` anlegen/schalten |
-| Wecker & Erinnerungen (exakte Alarme) | Fensterstart pünktlich + erlaubter Service-Start aus dem Hintergrund |
-| Benachrichtigungen | dezente Status-Notification des Service (IMPORTANCE_MIN) |
+| Do Not Disturb access | create/toggle the `AutomaticZenRule` + `ZenDeviceEffects` |
+| Alarms & reminders (exact alarms) | punctual window start + permitted service start from the background |
+| Notifications | the service's low-key status notification (IMPORTANCE_MIN) |
 
-Kein Internet, keine Google-Dienste, keine Analytik. GPLv3.
+No internet, no Google services, no analytics. GPLv3.
 
-## Bauen
+## Building
 
 ```bash
 ./gradlew assembleDebug        # APK: app/build/outputs/apk/debug/
-./gradlew assembleRelease      # signiert, wenn Signing-Properties gesetzt sind
+./gradlew assembleRelease      # signed if the signing properties are set
 ```
 
-Voraussetzungen: JDK 17+ (volles JDK, nicht nur JRE), Android SDK Platform 35.
+Requirements: JDK 17+ (a full JDK, not just a JRE), Android SDK Platform 35.
 
 ### Tests
 
 ```bash
-./gradlew test    # JVM-Unit-Tests: Fensterlogik (Schedule) + Dropdown-Mapping
+./gradlew test    # JVM unit tests: window logic (Schedule) + dropdown mapping
 ```
 
-Die Tests laufen ohne Emulator und sichern u. a. die Wochenend-/Mitternachts-
-Fensterberechnung und den Dropdown-Regressionsfall aus v1.4.0 ab.
+The tests run without an emulator and lock in, among other things, the
+weekend/midnight window math and the dropdown regression from v1.4.0.
 
-### Release-Signing
+### Release signing
 
-Keystore und Passwort liegen bewusst **außerhalb** des Repos, in
+Keystore and password deliberately live **outside** the repo, in
 `~/.gradle/gradle.properties`:
 
 ```properties
-ZENDOCK_KEYSTORE=/pfad/zu/zendock-release.jks (Name historisch, Schlüssel gilt für PlugNap)
+ZENDOCK_KEYSTORE=/path/to/release.jks    # property names are historical
 ZENDOCK_KEYSTORE_PW=…
 ZENDOCK_KEY_ALIAS=zendock
 ```
 
-Ohne diese Properties baut `assembleRelease` unsigniert. **Keystore sichern!**
-Updates lassen sich nur mit demselben Schlüssel installieren.
+Without these properties `assembleRelease` builds unsigned. **Back up the
+keystore!** Updates can only be installed with the same key.
 
-## Installieren (Pixel, GrapheneOS)
+## Installing (Pixel, GrapheneOS)
 
 ```bash
-adb install app/build/outputs/apk/debug/app-debug.apk
+adb install app/build/outputs/apk/release/app-release.apk
 ```
 
-Danach in der App: beide Berechtigungen erteilen, Hauptschalter an,
-mit „Effekte 15 Sekunden testen" prüfen.
+Then, inside the app: grant both permissions, flip the main switch, and
+verify with "Preview effects for 15 seconds".
 
-## Grenzen
+## Limitations
 
-- Mindestens Android 15 (API 35) — vorher existiert die `ZenDeviceEffects`-API nicht.
-- `TYPE_BEDTIME` ist der System-Wellbeing-App vorbehalten; die Regel nutzt
-  daher `TYPE_OTHER` (funktional identisch, nur andere Kategorisierung).
+- Android 15 (API 35) minimum — the `ZenDeviceEffects` API doesn't exist
+  before that.
+- `TYPE_BEDTIME` is reserved for the system wellbeing app; the rule
+  therefore uses `TYPE_OTHER` (functionally identical, just categorized
+  differently).
 
-## Lizenz
+## License
 
 Copyright © 2026 Georg FJ Hufnagl.
 
-Dieses Programm ist freie Software: Weitergabe und Veränderung unter den
-Bedingungen der **GNU General Public License, Version 3 oder später**
-(GPL-3.0-or-later), siehe [LICENSE](LICENSE). Abhängigkeiten (AndroidX,
-Material Components) stehen unter Apache-2.0 und sind mit der GPLv3
-kompatibel.
+This program is free software: you can redistribute it and/or modify it
+under the terms of the **GNU General Public License, version 3 or later**
+(GPL-3.0-or-later), see [LICENSE](LICENSE). Dependencies (AndroidX,
+Material Components) are Apache-2.0 licensed and compatible with the GPLv3.
