@@ -91,7 +91,21 @@ ZENDOCK_KEY_ALIAS=zendock
 Without these properties `assembleRelease` builds unsigned. **Back up the
 keystore!** Updates can only be installed with the same key.
 
-## Installing (Pixel, GrapheneOS)
+## Installing
+
+**Recommended: [Obtainium](https://github.com/ImranR98/Obtainium).** Add
+this repository as an app source:
+
+```
+https://github.com/Georg912/plugnap
+```
+
+Obtainium installs the signed APK straight from the GitHub releases and
+notifies you about updates — no store account, no middleman, and the
+developer signature stays intact across updates.
+
+Alternatively, download the APK manually from the
+[releases page](https://github.com/Georg912/plugnap/releases), or via adb:
 
 ```bash
 adb install app/build/outputs/apk/release/app-release.apk
