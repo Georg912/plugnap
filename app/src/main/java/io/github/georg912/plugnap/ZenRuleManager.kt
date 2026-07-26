@@ -74,10 +74,14 @@ object ZenRuleManager {
         // Self-heal: remove orphaned rules from earlier installs. After a data
         // clear or a backup restore the stored ruleId is lost/stale, but the
         // old rule keeps existing (possibly stuck ACTIVE, holding DND on
-        // forever). getAutomaticZenRules() returns only our own rules.
+        // forever). Matching on OUR conditionId (contains the package name)
+        // makes this safe regardless of whether getAutomaticZenRules() is
+        // caller-scoped on every Android version — we never touch rules that
+        // aren't provably ours.
         runCatching {
-            nm.automaticZenRules.keys
-                .filter { it != existingId }
+            nm.automaticZenRules
+                .filter { it.value.conditionId == CONDITION_URI && it.key != existingId }
+                .keys
                 .forEach { orphan ->
                     nm.removeAutomaticZenRule(orphan)
                     Log.i(TAG, "Removed orphaned zen rule $orphan")
