@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -20,6 +21,7 @@ object AlarmScheduler {
     const val ACTION_WINDOW_START = "io.github.georg912.plugnap.WINDOW_START"
     const val ACTION_WINDOW_END = "io.github.georg912.plugnap.WINDOW_END"
     const val ACTION_SKIP_TONIGHT = "io.github.georg912.plugnap.SKIP_TONIGHT"
+    const val ACTION_REEVALUATE = "io.github.georg912.plugnap.REEVALUATE"
 
     fun canScheduleExact(context: Context): Boolean =
         context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
@@ -54,6 +56,30 @@ object AlarmScheduler {
         val current = Schedule.currentWindow(now, prefs)
         val insideWindow = current == null || alarmDt.isAfter(current.start)
         return if (alarmDt.isAfter(now) && alarmDt.isBefore(end) && insideWindow) alarmDt else end
+    }
+
+    /**
+     * Doze-safe short timer for the unplug grace period and the plug-in
+     * activation delay. Handler.postDelayed counts uptimeMillis, which stops
+     * during CPU suspend — and "cable pulled, screen off" is exactly the
+     * suspend scenario, so a 30 s grace could stretch indefinitely. A wakeup
+     * alarm fires on wall-clock time and also survives process death; the
+     * receiver simply re-evaluates the current state.
+     */
+    fun scheduleReevaluate(context: Context, delayMs: Long) {
+        val am = context.getSystemService(AlarmManager::class.java)
+        val pi = pendingIntent(context, ACTION_REEVALUATE)
+        val triggerAt = SystemClock.elapsedRealtime() + delayMs
+        if (am.canScheduleExactAlarms()) {
+            am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAt, pi)
+        } else {
+            am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAt, pi)
+        }
+    }
+
+    fun cancelReevaluate(context: Context) {
+        context.getSystemService(AlarmManager::class.java)
+            .cancel(pendingIntent(context, ACTION_REEVALUATE))
     }
 
     private fun set(am: AlarmManager, triggerAtMillis: Long, pi: PendingIntent) {

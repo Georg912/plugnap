@@ -70,6 +70,20 @@ object ZenRuleManager {
             .build()
 
         val existingId = prefs.ruleId?.takeIf { runCatching { nm.getAutomaticZenRule(it) }.getOrNull() != null }
+
+        // Self-heal: remove orphaned rules from earlier installs. After a data
+        // clear or a backup restore the stored ruleId is lost/stale, but the
+        // old rule keeps existing (possibly stuck ACTIVE, holding DND on
+        // forever). getAutomaticZenRules() returns only our own rules.
+        runCatching {
+            nm.automaticZenRules.keys
+                .filter { it != existingId }
+                .forEach { orphan ->
+                    nm.removeAutomaticZenRule(orphan)
+                    Log.i(TAG, "Removed orphaned zen rule $orphan")
+                }
+        }
+
         return try {
             if (existingId != null) {
                 nm.updateAutomaticZenRule(existingId, rule)

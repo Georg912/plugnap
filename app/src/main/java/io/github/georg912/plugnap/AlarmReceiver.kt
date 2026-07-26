@@ -30,6 +30,16 @@ class AlarmReceiver : BroadcastReceiver() {
                 ZenRuleManager.setActive(context, false)
                 context.stopService(Intent(context, BedtimeService::class.java))
             }
+            AlarmScheduler.ACTION_REEVALUATE -> {
+                // Grace period or activation delay elapsed: let the service
+                // re-check the current state (charging, type, skip, window).
+                // Also self-heals if the service died while a timer was pending.
+                try {
+                    BedtimeService.start(context)
+                } catch (e: Exception) {
+                    Log.e("PlugNap", "Re-evaluate service start failed", e)
+                }
+            }
             AlarmScheduler.ACTION_SKIP_TONIGHT -> {
                 prefs.skipUntil = Schedule.skipUntilMillis(prefs)
                 ZenRuleManager.setActive(context, false)

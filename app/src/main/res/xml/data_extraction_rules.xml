@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings are backed up; device-bound state (zen rule id) is not — a
+     restored ruleId would point at a rule that doesn't exist on the new
+     device. ensureRule() also guards against this, but excluding it makes
+     the intent explicit. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="zendock_device.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="zendock_device.xml" />
+    </device-transfer>
+</data-extraction-rules>

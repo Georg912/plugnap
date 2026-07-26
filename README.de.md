@@ -117,6 +117,10 @@ mit „Effekte 15 Sekunden testen" prüfen.
 - Mindestens Android 15 (API 35) — vorher existiert die `ZenDeviceEffects`-API nicht.
 - `TYPE_BEDTIME` ist der System-Wellbeing-App vorbehalten; die Regel nutzt
   daher `TYPE_OTHER` (funktional identisch, nur andere Kategorisierung).
+- Vor dem Deinstallieren einmal den Hauptschalter ausschalten — das
+  entfernt den Modus aus den Systemeinstellungen. Bei Deinstallation mit
+  bestehender Regel kann ein verwaister Modus-Eintrag zurückbleiben, bis
+  Android ihn aufräumt.
 
 ## Lizenz
 

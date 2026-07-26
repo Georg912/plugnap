@@ -121,6 +121,9 @@ verify with "Preview effects for 15 seconds".
 - `TYPE_BEDTIME` is reserved for the system wellbeing app; the rule
   therefore uses `TYPE_OTHER` (functionally identical, just categorized
   differently).
+- Before uninstalling, turn the main switch off once — that removes the
+  mode from the system settings. Uninstalling with the rule still present
+  can leave an orphaned mode entry behind until Android cleans it up.
 
 ## License
 

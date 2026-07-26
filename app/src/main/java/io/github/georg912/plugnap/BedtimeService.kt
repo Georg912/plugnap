@@ -12,9 +12,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.BatteryManager
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -32,36 +30,31 @@ import java.util.Locale
 class BedtimeService : Service() {
 
     private var receiverRegistered = false
-    private val handler = Handler(Looper.getMainLooper())
 
-    // Unplug grace period: briefly repositioning the cable doesn't end the mode.
-    private val delayedOff = Runnable {
-        ZenRuleManager.setActive(this, false)
-        updateNotification()
-    }
-
-    // Delayed activation: a quick top-up charge doesn't trigger the mode.
-    private val delayedOn = Runnable {
-        evaluate()
-        updateNotification()
-    }
-
+    // The grace/delay timers are wakeup alarms, NOT Handler.postDelayed:
+    // postDelayed counts uptimeMillis, which stops during CPU suspend — and
+    // "cable pulled, screen off" is exactly the suspend scenario. The alarm
+    // fires ACTION_REEVALUATE, which restarts this service and re-checks the
+    // actual state; it also survives process death mid-timer.
     private val powerReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 Intent.ACTION_POWER_CONNECTED -> {
-                    handler.removeCallbacks(delayedOn)
+                    AlarmScheduler.cancelReevaluate(context)
                     val delayMs = Prefs(context).plugInDelaySec * 1000L
                     if (delayMs == 0L) evaluate()
-                    else handler.postDelayed(delayedOn, delayMs)
+                    else AlarmScheduler.scheduleReevaluate(context, delayMs)
                 }
                 Intent.ACTION_POWER_DISCONNECTED -> {
-                    handler.removeCallbacks(delayedOn)
+                    AlarmScheduler.cancelReevaluate(context)
                     val prefs = Prefs(context)
                     if (prefs.ruleActive) {
                         val graceMs = prefs.unplugGraceSec * 1000L
-                        if (graceMs == 0L) delayedOff.run()
-                        else handler.postDelayed(delayedOff, graceMs)
+                        if (graceMs == 0L) {
+                            ZenRuleManager.setActive(this@BedtimeService, false)
+                        } else {
+                            AlarmScheduler.scheduleReevaluate(context, graceMs)
+                        }
                     }
                 }
                 AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED ->
@@ -83,8 +76,10 @@ class BedtimeService : Service() {
             addAction(Intent.ACTION_POWER_DISCONNECTED)
             addAction(AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED)
         }
+        // NOT_EXPORTED: these are protected system broadcasts, and system
+        // senders reach non-exported receivers just fine — free hardening.
         ContextCompat.registerReceiver(
-            this, powerReceiver, filter, ContextCompat.RECEIVER_EXPORTED
+            this, powerReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED
         )
         receiverRegistered = true
     }
@@ -111,7 +106,6 @@ class BedtimeService : Service() {
         val prefs = Prefs(this)
         val skipped = System.currentTimeMillis() < prefs.skipUntil
         val shouldBeOn = !skipped && currentPlugAllowed(prefs)
-        if (shouldBeOn) handler.removeCallbacks(delayedOff)
         ZenRuleManager.setActive(this, shouldBeOn)
     }
 
@@ -130,8 +124,9 @@ class BedtimeService : Service() {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacks(delayedOff)
-        handler.removeCallbacks(delayedOn)
+        // Deliberately NOT cancelling a pending re-evaluate alarm: if the
+        // system kills us mid-timer, the alarm restarts the service and the
+        // state check completes — that's the self-healing path.
         if (receiverRegistered) unregisterReceiver(powerReceiver)
         super.onDestroy()
     }

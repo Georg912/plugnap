@@ -10,6 +10,23 @@ class Prefs(context: Context) : ScheduleParams {
     private val sp: SharedPreferences =
         context.getSharedPreferences("zendock", Context.MODE_PRIVATE)
 
+    // Device-bound state lives in its own file, which is excluded from
+    // backups (see data_extraction_rules.xml): a restored ruleId would point
+    // at a zen rule that doesn't exist on the new device.
+    private val deviceSp: SharedPreferences =
+        context.getSharedPreferences("zendock_device", Context.MODE_PRIVATE)
+
+    init {
+        // One-time migration: rule state used to live in the backed-up file.
+        if (!deviceSp.contains("rule_id") && sp.contains("rule_id")) {
+            deviceSp.edit()
+                .putString("rule_id", sp.getString("rule_id", null))
+                .putBoolean("rule_active", sp.getBoolean("rule_active", false))
+                .apply()
+            sp.edit().remove("rule_id").remove("rule_active").apply()
+        }
+    }
+
     var enabled: Boolean
         get() = sp.getBoolean("enabled", false)
         set(v) = sp.edit().putBoolean("enabled", v).apply()
@@ -104,13 +121,13 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getInt("filter", NotificationManager.INTERRUPTION_FILTER_PRIORITY)
         set(v) = sp.edit().putInt("filter", v).apply()
 
-    /** System-assigned id of our AutomaticZenRule */
+    /** System-assigned id of our AutomaticZenRule (device-bound, not backed up) */
     var ruleId: String?
-        get() = sp.getString("rule_id", null)
-        set(v) = sp.edit().putString("rule_id", v).apply()
+        get() = deviceSp.getString("rule_id", null)
+        set(v) = deviceSp.edit().putString("rule_id", v).apply()
 
     /** Whether we currently have the rule activated (for status display) */
     var ruleActive: Boolean
-        get() = sp.getBoolean("rule_active", false)
-        set(v) = sp.edit().putBoolean("rule_active", v).apply()
+        get() = deviceSp.getBoolean("rule_active", false)
+        set(v) = deviceSp.edit().putBoolean("rule_active", v).apply()
 }
