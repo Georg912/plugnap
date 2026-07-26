@@ -1,0 +1,1 @@
+First release: bedtime mode while charging via ZenDeviceEffects — grayscale, AOD off, dim wallpaper, dark theme + Do Not Disturb. Configurable night window, 15-second effect preview.

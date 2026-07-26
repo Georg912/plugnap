@@ -1,0 +1,1 @@
+Zuverlässigkeit: Doze-sichere Wakeup-Alarm-Timer für Karenz/Verzögerung, automatische Entfernung verwaister Modi aus früheren Installationen, Receiver-Härtung, gerätegebundener Zustand vom Backup ausgenommen.

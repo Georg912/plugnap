@@ -1,0 +1,1 @@
+Configurable unplug grace period (immediately up to 2 minutes) and app theme selection (system / light / dark).

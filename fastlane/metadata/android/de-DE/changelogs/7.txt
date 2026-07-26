@@ -1,0 +1,1 @@
+Behoben: Dropdowns zeigten nach Theme-Wechsel nur noch einen Eintrag und setzten falsche Werte. Erste Unit-Tests ergänzt.

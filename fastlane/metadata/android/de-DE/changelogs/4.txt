@@ -1,0 +1,1 @@
+ZenDock heißt jetzt PlugNap. Neue App-ID (io.github.georg912.plugnap) — kein Update über ZenDock; bitte frisch installieren.

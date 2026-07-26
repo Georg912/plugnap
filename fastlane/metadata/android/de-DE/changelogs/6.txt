@@ -1,0 +1,1 @@
+Anstecke-Verzögerung (bis 10 Minuten — kurzes Zwischenladen löst nichts aus) und ausblendbare Status-Benachrichtigung.

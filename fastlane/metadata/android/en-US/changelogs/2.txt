@@ -1,0 +1,1 @@
+Security hardening (boot receiver action allow-list), lint fixes, per-feature explanations built into the app.

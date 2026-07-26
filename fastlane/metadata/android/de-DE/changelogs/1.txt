@@ -1,0 +1,1 @@
+Erstes Release: Schlafmodus beim Laden via ZenDeviceEffects — Graustufen, AOD aus, Wallpaper dimmen, dunkles Design + Bitte nicht stören. Konfigurierbares Nachtfenster, 15-Sekunden-Vorschau.

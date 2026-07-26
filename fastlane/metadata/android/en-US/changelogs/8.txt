@@ -1,0 +1,1 @@
+Reliability: doze-safe wakeup-alarm timers for grace/delay, automatic removal of orphaned modes from earlier installs, receiver hardening, device-bound state excluded from backups.

@@ -1,0 +1,1 @@
+Sicherheits-Härtung (Action-Allow-List im Boot-Receiver), Lint-Fixes, Erklärungen zu jedem Feature direkt in der App.

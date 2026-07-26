@@ -1,0 +1,1 @@
+Fixed: dropdowns showed only one entry after switching the app theme and applied the wrong value. First unit tests added.

@@ -1,0 +1,1 @@
+Plug-in activation delay (up to 10 minutes — a quick top-up won't trigger the mode) and hideable status notification.

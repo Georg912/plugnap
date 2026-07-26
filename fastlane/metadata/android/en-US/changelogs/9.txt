@@ -1,0 +1,1 @@
+Safety patch: the orphan-mode cleanup only ever touches rules matching PlugNap's own condition URI — other apps' or the user's DND rules can never be affected.
