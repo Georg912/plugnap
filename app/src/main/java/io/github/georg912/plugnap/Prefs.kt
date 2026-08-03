@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import java.time.DayOfWeek
 
 /** App settings. Times are minutes since midnight (local time). */
 class Prefs(context: Context) : ScheduleParams {
@@ -44,10 +45,15 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getInt("window_end", 7 * 60)
         set(v) = sp.edit().putInt("window_end", v).apply()
 
-    /** Separate times for Friday and Saturday nights */
-    override var weekendEnabled: Boolean
-        get() = sp.getBoolean("weekend_enabled", false)
-        set(v) = sp.edit().putBoolean("weekend_enabled", v).apply()
+    /** Schedule variant; migrates from the pre-1.6 weekend_enabled boolean. */
+    override var mode: ScheduleMode
+        get() {
+            sp.getString("schedule_mode", null)?.let { return ScheduleMode.valueOf(it) }
+            return if (sp.getBoolean("weekend_enabled", false)) ScheduleMode.WEEKEND
+            else ScheduleMode.SIMPLE
+        }
+        set(v) = sp.edit().putString("schedule_mode", v.name)
+            .remove("weekend_enabled").apply()
 
     override var weekendStart: Int
         get() = sp.getInt("weekend_start", 23 * 60)
@@ -56,6 +62,20 @@ class Prefs(context: Context) : ScheduleParams {
     override var weekendEnd: Int
         get() = sp.getInt("weekend_end", 8 * 60)
         set(v) = sp.edit().putInt("weekend_end", v).apply()
+
+    /** Per-day times; defaults derive from windowStart/windowEnd so the first
+     *  switch to PER_DAY is behavior-neutral. Day off = start == end. */
+    override fun dayStart(d: DayOfWeek): Int =
+        sp.getInt("day_start_${d.value}", windowStart)
+
+    override fun dayEnd(d: DayOfWeek): Int =
+        sp.getInt("day_end_${d.value}", windowEnd)
+
+    fun setDayStart(d: DayOfWeek, v: Int) =
+        sp.edit().putInt("day_start_${d.value}", v).apply()
+
+    fun setDayEnd(d: DayOfWeek, v: Int) =
+        sp.edit().putInt("day_end_${d.value}", v).apply()
 
     /** Which charger types may trigger the mode */
     var plugAc: Boolean
@@ -70,10 +90,21 @@ class Prefs(context: Context) : ScheduleParams {
         get() = sp.getBoolean("plug_wireless", true)
         set(v) = sp.edit().putBoolean("plug_wireless", v).apply()
 
-    /** End the mode at the next alarm clock instead of the window end */
-    var endAtAlarm: Boolean
-        get() = sp.getBoolean("end_at_alarm", false)
-        set(v) = sp.edit().putBoolean("end_at_alarm", v).apply()
+    /** How the next alarm clock affects the window end; migrates from the
+     *  pre-1.6 end_at_alarm boolean (true = the old shorten-only behavior). */
+    override var alarmEndMode: AlarmEndMode
+        get() {
+            sp.getString("alarm_end_mode", null)?.let { return AlarmEndMode.valueOf(it) }
+            return if (sp.getBoolean("end_at_alarm", false)) AlarmEndMode.SHORTEN
+            else AlarmEndMode.OFF
+        }
+        set(v) = sp.edit().putString("alarm_end_mode", v.name)
+            .remove("end_at_alarm").apply()
+
+    /** Hard cap for EXTEND/FOLLOW: alarms further past the window end are ignored. */
+    override var maxExtendMinutes: Int
+        get() = sp.getInt("max_extend_min", 120)
+        set(v) = sp.edit().putInt("max_extend_min", v).apply()
 
     /** "Skip tonight": don't activate until this instant (epoch millis) */
     var skipUntil: Long

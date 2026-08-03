@@ -1,0 +1,1 @@
+Pro-Tag-Zeitplan: eigene Zeiten (oder frei) für jeden Wochentag, zweitagig beschriftet („Mo 21:00 → Di 07:00"). Wecker-Ende jetzt in beide Richtungen: Der Modus kann sich bis zum Wecker verlängern, wenn du länger schläfst — nur früher / nur später / immer, begrenzt durch „Höchstens verlängern".

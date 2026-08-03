@@ -6,6 +6,7 @@
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -131,7 +132,38 @@
             style="@style/HelpText"
             android:text="@string/help_all_day" />
 
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+            <Button
+                android:id="@+id/btnModeSimple"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/mode_simple" />
+            <Button
+                android:id="@+id/btnModeWeekend"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/mode_weekend" />
+            <Button
+                android:id="@+id/btnModePerDay"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/mode_per_day" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
         <LinearLayout
+            android:id="@+id/rowWindow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -156,16 +188,12 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/helpWindow"
             style="@style/HelpText"
             android:text="@string/help_window" />
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchWeekend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/weekend_switch" />
-
         <TextView
+            android:id="@+id/helpWeekend"
             style="@style/HelpText"
             android:text="@string/help_weekend" />
 
@@ -194,6 +222,18 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/perDayHint"
+            style="@style/HelpText"
+            android:text="@string/per_day_hint" />
+
+        <LinearLayout
+            android:id="@+id/containerPerDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="8dp" />
+
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchEndAtAlarm"
             android:layout_width="match_parent"
@@ -203,6 +243,51 @@
         <TextView
             style="@style/HelpText"
             android:text="@string/help_end_at_alarm" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleAlarmMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+            <Button
+                android:id="@+id/btnAlarmShorten"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_shorten" />
+            <Button
+                android:id="@+id/btnAlarmExtend"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_extend" />
+            <Button
+                android:id="@+id/btnAlarmFollow"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_follow" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilMaxExtend"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/max_extend_label">
+
+            <AutoCompleteTextView
+                android:id="@+id/dropdownMaxExtend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Charger types -->
         <com.google.android.material.divider.MaterialDivider style="@style/Divider" />

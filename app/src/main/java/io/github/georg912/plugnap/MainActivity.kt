@@ -10,22 +10,31 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.Gravity
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.TextStyle
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -92,11 +101,23 @@ class MainActivity : AppCompatActivity() {
             pickTime(prefs.windowEnd) { prefs.windowEnd = it; applyConfiguration() }
         }
 
-        // --- Weekend ---
-        val weekend = findViewById<MaterialSwitch>(R.id.switchWeekend)
-        weekend.isChecked = prefs.weekendEnabled
-        weekend.setOnCheckedChangeListener { _, checked ->
-            prefs.weekendEnabled = checked
+        // --- Schedule mode (simple / weekend / per day) ---
+        val toggleMode = findViewById<MaterialButtonToggleGroup>(R.id.toggleMode)
+        toggleMode.check(
+            when (prefs.mode) {
+                ScheduleMode.SIMPLE -> R.id.btnModeSimple
+                ScheduleMode.WEEKEND -> R.id.btnModeWeekend
+                ScheduleMode.PER_DAY -> R.id.btnModePerDay
+            }
+        )
+        toggleMode.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            prefs.mode = when (checkedId) {
+                R.id.btnModeWeekend -> ScheduleMode.WEEKEND
+                R.id.btnModePerDay -> ScheduleMode.PER_DAY
+                else -> ScheduleMode.SIMPLE
+            }
+            animateLayoutChange()
             applyConfiguration()
         }
         findViewById<Button>(R.id.btnWeekendStart).setOnClickListener {
@@ -105,12 +126,36 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnWeekendEnd).setOnClickListener {
             pickTime(prefs.weekendEnd) { prefs.weekendEnd = it; applyConfiguration() }
         }
+        buildPerDayRows()
 
         // --- End at alarm ---
         val endAtAlarm = findViewById<MaterialSwitch>(R.id.switchEndAtAlarm)
-        endAtAlarm.isChecked = prefs.endAtAlarm
+        val toggleAlarm = findViewById<MaterialButtonToggleGroup>(R.id.toggleAlarmMode)
+        endAtAlarm.isChecked = prefs.alarmEndMode != AlarmEndMode.OFF
+        toggleAlarm.check(
+            when (prefs.alarmEndMode) {
+                AlarmEndMode.EXTEND -> R.id.btnAlarmExtend
+                AlarmEndMode.FOLLOW -> R.id.btnAlarmFollow
+                else -> R.id.btnAlarmShorten
+            }
+        )
         endAtAlarm.setOnCheckedChangeListener { _, checked ->
-            prefs.endAtAlarm = checked
+            prefs.alarmEndMode =
+                if (!checked) AlarmEndMode.OFF else checkedAlarmMode(toggleAlarm)
+            animateLayoutChange()
+            applyConfiguration()
+        }
+        toggleAlarm.addOnButtonCheckedListener { _, _, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            if (endAtAlarm.isChecked) {
+                prefs.alarmEndMode = checkedAlarmMode(toggleAlarm)
+                animateLayoutChange()
+                applyConfiguration()
+            }
+        }
+        bindDropdown(R.id.dropdownMaxExtend, R.array.max_extend_labels, MAX_EXTEND_VALUES,
+            prefs.maxExtendMinutes) {
+            prefs.maxExtendMinutes = it
             applyConfiguration()
         }
 
@@ -191,7 +236,8 @@ class MainActivity : AppCompatActivity() {
         if (prefs.enabled && ZenRuleManager.hasDndAccess(this)) {
             ZenRuleManager.ensureRule(this)
             AlarmScheduler.reschedule(this)
-            if (Schedule.inWindow(LocalDateTime.now(), prefs)) {
+            val alarm = AlarmScheduler.nextAlarmClockTime(this)
+            if (Schedule.inWindow(LocalDateTime.now(), prefs, alarm)) {
                 BedtimeService.start(this)
             } else {
                 BedtimeService.stop(this)
@@ -256,6 +302,136 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkedAlarmMode(group: MaterialButtonToggleGroup): AlarmEndMode =
+        when (group.checkedButtonId) {
+            R.id.btnAlarmExtend -> AlarmEndMode.EXTEND
+            R.id.btnAlarmFollow -> AlarmEndMode.FOLLOW
+            else -> AlarmEndMode.SHORTEN
+        }
+
+    private fun animateLayoutChange() {
+        TransitionManager.beginDelayedTransition(
+            findViewById(R.id.settingsContainer),
+            AutoTransition().setDuration(150)
+        )
+    }
+
+    /** Shows exactly the block belonging to the current schedule/alarm mode. */
+    private fun updateModeVisibility() {
+        val mode = prefs.mode
+        findViewById<View>(R.id.rowWindow).isVisible = mode != ScheduleMode.PER_DAY
+        findViewById<View>(R.id.helpWindow).isVisible = mode != ScheduleMode.PER_DAY
+        findViewById<View>(R.id.helpWeekend).isVisible = mode == ScheduleMode.WEEKEND
+        findViewById<View>(R.id.rowWeekend).isVisible = mode == ScheduleMode.WEEKEND
+        findViewById<View>(R.id.perDayHint).isVisible = mode == ScheduleMode.PER_DAY
+        findViewById<View>(R.id.containerPerDay).isVisible = mode == ScheduleMode.PER_DAY
+        val alarmMode = prefs.alarmEndMode
+        findViewById<View>(R.id.toggleAlarmMode).isVisible = alarmMode != AlarmEndMode.OFF
+        findViewById<View>(R.id.tilMaxExtend).isVisible =
+            alarmMode == AlarmEndMode.EXTEND || alarmMode == AlarmEndMode.FOLLOW
+    }
+
+    /**
+     * Seven rows: switch | day | start -> (next day) end. Each time belongs to
+     * the night starting on that evening — the end button carries the next
+     * day's abbreviation when the window crosses midnight, so users don't set
+     * "Monday" thinking of the morning they wake up.
+     */
+    private fun buildPerDayRows() {
+        val container = findViewById<LinearLayout>(R.id.containerPerDay)
+        container.removeAllViews()
+        val locale = Locale.getDefault()
+        val fmt = { m: Int -> String.format(Locale.ROOT, "%02d:%02d", m / 60, m % 60) }
+        for (day in DayOfWeek.entries) {
+            val start = prefs.dayStart(day)
+            val end = prefs.dayEnd(day)
+            val dayEnabled = start != end
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+            }
+            row.addView(
+                MaterialSwitch(this).apply {
+                    isChecked = dayEnabled
+                    setOnCheckedChangeListener { _, checked ->
+                        if (checked) {
+                            var newEnd = prefs.windowEnd
+                            if (newEnd == prefs.dayStart(day)) newEnd = (newEnd + 60) % (24 * 60)
+                            prefs.setDayEnd(day, newEnd)
+                        } else {
+                            prefs.setDayEnd(day, prefs.dayStart(day))
+                        }
+                        animateLayoutChange()
+                        buildPerDayRows()
+                        applyConfiguration()
+                    }
+                }
+            )
+            row.addView(
+                TextView(this).apply {
+                    text = day.getDisplayName(TextStyle.SHORT, locale)
+                    layoutParams = LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+                    )
+                }
+            )
+            if (dayEnabled) {
+                row.addView(
+                    MaterialButton(
+                        this, null,
+                        com.google.android.material.R.attr.materialButtonOutlinedStyle
+                    ).apply {
+                        text = fmt(start)
+                        setOnClickListener {
+                            pickTime(prefs.dayStart(day)) {
+                                prefs.setDayStart(day, it)
+                                buildPerDayRows()
+                                applyConfiguration()
+                            }
+                        }
+                    }
+                )
+                row.addView(TextView(this).apply { text = " → " })
+                val crossesMidnight = end < start
+                val endPrefix =
+                    if (crossesMidnight) day.plus(1).getDisplayName(TextStyle.SHORT, locale) + " "
+                    else ""
+                row.addView(
+                    MaterialButton(
+                        this, null,
+                        com.google.android.material.R.attr.materialButtonOutlinedStyle
+                    ).apply {
+                        text = endPrefix + fmt(end)
+                        setOnClickListener {
+                            pickTime(prefs.dayEnd(day)) {
+                                prefs.setDayEnd(day, it)
+                                buildPerDayRows()
+                                applyConfiguration()
+                            }
+                        }
+                    }
+                )
+            }
+            row.setOnLongClickListener {
+                val s = prefs.dayStart(day)
+                val e = prefs.dayEnd(day)
+                if (s != e) {
+                    DayOfWeek.entries.forEach { d ->
+                        if (prefs.dayStart(d) != prefs.dayEnd(d)) {
+                            prefs.setDayStart(d, s)
+                            prefs.setDayEnd(d, e)
+                        }
+                    }
+                    Toast.makeText(this, R.string.copied_to_all, Toast.LENGTH_SHORT).show()
+                    buildPerDayRows()
+                    applyConfiguration()
+                }
+                true
+            }
+            container.addView(row)
+        }
+    }
+
     private fun pickTime(minuteOfDay: Int, onPicked: (Int) -> Unit) {
         val picker = MaterialTimePicker.Builder()
             .setTimeFormat(TimeFormat.CLOCK_24H)
@@ -313,20 +489,22 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnWindowEnd).text = fmt(prefs.windowEnd)
         findViewById<Button>(R.id.btnWeekendStart).text = fmt(prefs.weekendStart)
         findViewById<Button>(R.id.btnWeekendEnd).text = fmt(prefs.weekendEnd)
-        val weekendOn = prefs.weekendEnabled
-        findViewById<Button>(R.id.btnWeekendStart).isEnabled = weekendOn
-        findViewById<Button>(R.id.btnWeekendEnd).isEnabled = weekendOn
+        updateModeVisibility()
 
         findViewById<MaterialButton>(R.id.btnSkip).text = getString(
             if (skipActive()) R.string.resume_skip else R.string.skip_tonight
         )
 
         val charging = getSystemService(BatteryManager::class.java).isCharging
-        val inWindow = Schedule.inWindow(LocalDateTime.now(), prefs)
+        val inWindow = Schedule.inWindow(
+            LocalDateTime.now(), prefs, AlarmScheduler.nextAlarmClockTime(this)
+        )
         val status = findViewById<TextView>(R.id.textStatus)
         status.text = when {
             !prefs.enabled -> getString(R.string.status_disabled)
             !dnd -> getString(R.string.status_no_permission)
+            !prefs.allDay && Schedule.allDaysOff(prefs) ->
+                getString(R.string.status_no_window)
             skipActive() -> getString(
                 R.string.status_skipped,
                 LocalDateTime.ofInstant(
@@ -352,6 +530,7 @@ class MainActivity : AppCompatActivity() {
         )
         private val GRACE_VALUES = intArrayOf(0, 15, 30, 60, 120)
         private val PLUG_DELAY_VALUES = intArrayOf(0, 60, 120, 300, 600)
+        private val MAX_EXTEND_VALUES = intArrayOf(30, 60, 120, 180, 240)
         private val THEME_VALUES = intArrayOf(
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
             AppCompatDelegate.MODE_NIGHT_NO,

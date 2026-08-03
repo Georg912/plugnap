@@ -90,7 +90,8 @@ class BedtimeService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        if (!prefs.allDay && Schedule.currentWindow(LocalDateTime.now(), prefs) == null) {
+        val alarm = AlarmScheduler.nextAlarmClockTime(this)
+        if (!prefs.allDay && Schedule.currentWindow(LocalDateTime.now(), prefs, alarm) == null) {
             // Started outside the window (boot race etc.) -> shut down
             ZenRuleManager.setActive(this, false)
             stopSelf()

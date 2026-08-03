@@ -27,12 +27,14 @@ Unplug — or let the night window end — and everything switches back.
 
 ## Features
 
-- Configurable **night window** (default 21:00–07:00), separate weekend
-  times for Friday/Saturday nights, or round-the-clock triggering
+- Configurable **night window** (default 21:00–07:00): simple, separate
+  weekend times, or **individual times per weekday** (including days off) —
+  or round-the-clock triggering
 - **Charger-type filter** (power adapter / USB / wireless), activation
   delay (0–10 min) and unplug grace period (0 s–2 min)
 - **"Skip tonight"** in the app and in the notification, **end at your
-  next alarm clock**, quick-settings tile, 15-second effect preview
+  next alarm clock** — optionally extending the mode when you sleep in
+  (with a hard cap) — quick-settings tile, 15-second effect preview
 - Notification-filter choice (Priority / Alarms only / Total silence),
   app theme (system/light/dark), hideable status notification
 

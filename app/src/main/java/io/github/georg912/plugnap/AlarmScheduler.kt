@@ -41,22 +41,20 @@ object AlarmScheduler {
 
         val now = LocalDateTime.now()
         set(am, Schedule.toEpochMillis(Schedule.nextStart(now, prefs)), startPi)
-        set(am, Schedule.toEpochMillis(effectiveEnd(now, prefs, am)), endPi)
+        set(
+            am,
+            Schedule.toEpochMillis(
+                Schedule.nextEffectiveEnd(now, prefs, nextAlarmClockTime(context))
+            ),
+            endPi
+        )
     }
 
-    /**
-     * Regular window end — or earlier if "end at alarm" is enabled and the
-     * next alarm clock rings while still inside the window.
-     */
-    private fun effectiveEnd(now: LocalDateTime, prefs: Prefs, am: AlarmManager): LocalDateTime {
-        val end = Schedule.nextEnd(now, prefs)
-        if (!prefs.endAtAlarm) return end
-        val trigger = am.nextAlarmClock?.triggerTime ?: return end
-        val alarmDt = LocalDateTime.ofInstant(Instant.ofEpochMilli(trigger), ZoneId.systemDefault())
-        val current = Schedule.currentWindow(now, prefs)
-        val insideWindow = current == null || alarmDt.isAfter(current.start)
-        return if (alarmDt.isAfter(now) && alarmDt.isBefore(end) && insideWindow) alarmDt else end
-    }
+    /** The next alarm clock (any app using setAlarmClock), as local time. */
+    fun nextAlarmClockTime(context: Context): LocalDateTime? =
+        context.getSystemService(AlarmManager::class.java).nextAlarmClock
+            ?.triggerTime
+            ?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) }
 
     /**
      * Doze-safe short timer for the unplug grace period and the plug-in

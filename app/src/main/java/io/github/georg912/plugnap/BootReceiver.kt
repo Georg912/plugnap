@@ -27,7 +27,7 @@ class BootReceiver : BroadcastReceiver() {
         val prefs = Prefs(context)
         if (!prefs.enabled) return
         AlarmScheduler.reschedule(context)
-        if (Schedule.inWindow(LocalDateTime.now(), prefs)) {
+        if (Schedule.inWindow(LocalDateTime.now(), prefs, AlarmScheduler.nextAlarmClockTime(context))) {
             try {
                 BedtimeService.start(context)
             } catch (e: Exception) {

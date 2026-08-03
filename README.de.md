@@ -24,12 +24,14 @@ deaktiviert.
 
 ## Funktionen
 
-- Konfigurierbares **Nachtfenster** (Standard 21:00–07:00), eigene
-  Wochenend-Zeiten für die Nächte Fr/Sa, oder Auslösen rund um die Uhr
+- Konfigurierbares **Nachtfenster** (Standard 21:00–07:00): einfach, eigene
+  Wochenend-Zeiten oder **individuelle Zeiten pro Wochentag** (inklusive
+  freier Tage) — oder Auslösen rund um die Uhr
 - **Ladeart-Filter** (Netzteil / USB / kabellos), Anstecke-Verzögerung
   (0–10 min) und Abstecke-Karenz (0 s–2 min)
 - **„Heute aussetzen"** in App und Benachrichtigung, **Ende beim nächsten
-  Wecker**, Quick-Settings-Kachel, 15-Sekunden-Effektvorschau
+  Wecker** — auf Wunsch verlängert sich der Modus, wenn du länger schläfst
+  (mit harter Obergrenze) — Quick-Settings-Kachel, 15-Sekunden-Vorschau
 - Benachrichtigungsfilter (Priorität / Nur Wecker / Totale Stille),
   App-Design (System/Hell/Dunkel), ausblendbare Status-Benachrichtigung
 

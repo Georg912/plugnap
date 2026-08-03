@@ -1,0 +1,1 @@
+Per-day schedule: individual times (or a day off) for every weekday, labeled across both days ("Mon 21:00 → Tue 07:00"). Alarm-coupled end now works in both directions: the mode can extend until your alarm when you sleep in — earlier only / later only / always, limited by "Extend at most".

@@ -18,11 +18,27 @@
     <string name="section_window">Night window</string>
     <string name="all_day">Trigger at any time of day</string>
     <string name="window_from_to">Active from / until</string>
-    <string name="weekend_switch">Weekend times</string>
+    <string name="mode_simple">Simple</string>
+    <string name="mode_weekend">Weekend</string>
+    <string name="mode_per_day">Per day</string>
     <string name="help_weekend">Separate window for Friday and Saturday nights.</string>
     <string name="weekend_from_to">Fri/Sat from / until</string>
+    <string name="per_day_hint">Each time applies to the night that begins on that evening. Long-press a row to copy its times to all enabled days.</string>
+    <string name="copied_to_all">Times copied to all enabled days.</string>
+    <string name="status_no_window">No night window is active — all days are turned off.</string>
     <string name="end_at_alarm">End at next alarm clock</string>
-    <string name="help_end_at_alarm">If your alarm rings before the window ends, the mode already switches off at the alarm.</string>
+    <string name="help_end_at_alarm">Ends at your alarm clock instead of the window end. "Later only" keeps the mode on when you sleep in — limited by "Extend at most".</string>
+    <string name="alarm_shorten">Earlier only</string>
+    <string name="alarm_extend">Later only</string>
+    <string name="alarm_follow">Always</string>
+    <string name="max_extend_label">Extend at most</string>
+    <string-array name="max_extend_labels">
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>4 hours</item>
+    </string-array>
 
     <string name="section_charger">Charger types</string>
     <string name="charger_ac">Power adapter</string>

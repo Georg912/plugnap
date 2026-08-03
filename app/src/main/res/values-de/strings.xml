@@ -18,11 +18,27 @@
     <string name="section_window">Nachtfenster</string>
     <string name="all_day">Zu jeder Tageszeit auslösen</string>
     <string name="window_from_to">Aktiv von / bis</string>
-    <string name="weekend_switch">Wochenend-Zeiten</string>
+    <string name="mode_simple">Einfach</string>
+    <string name="mode_weekend">Wochenende</string>
+    <string name="mode_per_day">Pro Tag</string>
     <string name="help_weekend">Eigenes Fenster für die Nächte Fr→Sa und Sa→So.</string>
     <string name="weekend_from_to">Fr/Sa aktiv von / bis</string>
+    <string name="per_day_hint">Jede Zeit gilt für die Nacht, die an diesem Abend beginnt. Zeile lang drücken, um ihre Zeiten auf alle aktiven Tage zu übertragen.</string>
+    <string name="copied_to_all">Zeiten auf alle aktiven Tage übertragen.</string>
+    <string name="status_no_window">Kein Nachtfenster aktiv — alle Tage sind ausgeschaltet.</string>
     <string name="end_at_alarm">Beim nächsten Wecker beenden</string>
-    <string name="help_end_at_alarm">Klingelt dein Wecker vor dem Fensterende, schaltet der Modus schon beim Wecker ab.</string>
+    <string name="help_end_at_alarm">Endet zur Weckerzeit statt zum Fensterende. „Nur später" verlängert den Modus, wenn du länger schläfst — begrenzt durch „Höchstens verlängern".</string>
+    <string name="alarm_shorten">Nur früher</string>
+    <string name="alarm_extend">Nur später</string>
+    <string name="alarm_follow">Immer</string>
+    <string name="max_extend_label">Höchstens verlängern</string>
+    <string-array name="max_extend_labels">
+        <item>30 Minuten</item>
+        <item>1 Stunde</item>
+        <item>2 Stunden</item>
+        <item>3 Stunden</item>
+        <item>4 Stunden</item>
+    </string-array>
 
     <string name="section_charger">Ladearten</string>
     <string name="charger_ac">Netzteil</string>
