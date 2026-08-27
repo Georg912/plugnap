@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:fillViewport="true">
 
+    <!-- Every stateful widget below (switches, checkboxes, toggle groups)
+         carries its own android:saveEnabled="false". Reason: recreate()
+         (theme change, settings import) restores each child's own instance
+         state AFTER onCreate() has already set it from Prefs and attached
+         listeners — restoration re-fires OnCheckedChangeListener with the
+         PRE-recreate value, silently reverting whatever onCreate just set
+         (confirmed via stack trace: CompoundButton.onRestoreInstanceState ->
+         setChecked() -> our listener, called from Activity.handleStartActivity,
+         i.e. after onCreate returns). Prefs is the single source of truth
+         here; setSaveEnabled on this root container alone is NOT sufficient
+         (empirically verified) — it must be set per-widget. -->
     <LinearLayout
         android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
@@ -45,6 +58,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchEnabled"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/master_switch"
@@ -124,6 +138,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchAllDay"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/all_day" />
@@ -134,6 +149,7 @@
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleMode"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -141,6 +157,7 @@
             app:selectionRequired="true">
             <Button
                 android:id="@+id/btnModeSimple"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -148,6 +165,7 @@
                 android:text="@string/mode_simple" />
             <Button
                 android:id="@+id/btnModeWeekend"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -155,6 +173,7 @@
                 android:text="@string/mode_weekend" />
             <Button
                 android:id="@+id/btnModePerDay"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -236,6 +255,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchEndAtAlarm"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/end_at_alarm" />
@@ -246,6 +266,7 @@
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleAlarmMode"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -253,6 +274,7 @@
             app:selectionRequired="true">
             <Button
                 android:id="@+id/btnAlarmShorten"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -260,6 +282,7 @@
                 android:text="@string/alarm_shorten" />
             <Button
                 android:id="@+id/btnAlarmExtend"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -267,6 +290,7 @@
                 android:text="@string/alarm_extend" />
             <Button
                 android:id="@+id/btnAlarmFollow"
+                android:saveEnabled="false"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -284,6 +308,7 @@
 
             <AutoCompleteTextView
                 android:id="@+id/dropdownMaxExtend"
+                android:saveEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
@@ -302,18 +327,21 @@
             android:orientation="horizontal">
             <CheckBox
                 android:id="@+id/cbAc"
+                android:saveEnabled="false"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/charger_ac" />
             <CheckBox
                 android:id="@+id/cbUsb"
+                android:saveEnabled="false"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7"
                 android:text="@string/charger_usb" />
             <CheckBox
                 android:id="@+id/cbWireless"
+                android:saveEnabled="false"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -332,6 +360,7 @@
 
             <AutoCompleteTextView
                 android:id="@+id/dropdownPlugDelay"
+                android:saveEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
@@ -349,6 +378,7 @@
 
             <AutoCompleteTextView
                 android:id="@+id/dropdownGrace"
+                android:saveEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
@@ -367,6 +397,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchGrayscale"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/effect_grayscale" />
@@ -377,6 +408,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchAmbient"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/effect_ambient" />
@@ -387,6 +419,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchDimWallpaper"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/effect_dim_wallpaper" />
@@ -397,6 +430,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchNightMode"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/effect_night_mode" />
@@ -421,6 +455,7 @@
 
             <AutoCompleteTextView
                 android:id="@+id/dropdownFilter"
+                android:saveEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
@@ -446,6 +481,7 @@
 
             <AutoCompleteTextView
                 android:id="@+id/dropdownTheme"
+                android:saveEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
@@ -453,6 +489,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switchHideNotification"
+            android:saveEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/hide_notification" />
@@ -474,6 +511,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/mode_settings_button" />
+
+        <!-- Backup -->
+        <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
+
+        <TextView
+            style="@style/SectionHeader"
+            android:text="@string/section_backup" />
+
+        <TextView
+            style="@style/HelpText"
+            android:text="@string/help_backup" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportSettings"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/export_settings" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnImportSettings"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/import_settings" />
+        </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider style="@style/Divider" />
 

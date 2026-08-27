@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the cache dir is exposed, and only for the one exported settings
+     file — used by the FileProvider to share it via ACTION_SEND. -->
+<paths>
+    <cache-path name="exported_settings" path="." />
+</paths>

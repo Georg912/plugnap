@@ -33,7 +33,12 @@ deaktiviert.
   Wecker** — auf Wunsch verlängert sich der Modus, wenn du länger schläfst
   (mit harter Obergrenze) — Quick-Settings-Kachel, 15-Sekunden-Vorschau
 - Benachrichtigungsfilter (Priorität / Nur Wecker / Totale Stille),
-  App-Design (System/Hell/Dunkel), ausblendbare Status-Benachrichtigung
+  App-Design (System/Hell/Dunkel, mit Material-You-Farben ab Android 12),
+  ausblendbare Status-Benachrichtigung
+- **App-Kurzbefehle** (App-Icon lang drücken) für „Heute aussetzen" und die
+  15-Sekunden-Vorschau; **Einstellungen exportieren/importieren** (JSON,
+  über das Teilen-Menü), um den eingestellten Zeitplan auf ein neues Handy
+  zu übertragen oder zu sichern
 
 ## Funktionsweise
 

@@ -1,0 +1,1 @@
+Bugfix-Release plus eine Runde Politur: Material-You-Farben, randlose Darstellung, App-Kurzbefehle (Heute aussetzen / Vorschau), Einstellungen exportieren & importieren, CI bei jedem Commit, compileSdk/targetSdk 36. Behoben: Ein feiner Android-Framework-Effekt konnte beim Theme-Wechsel oder Einstellungs-Import andere Einstellungen unbemerkt zurücksetzen.

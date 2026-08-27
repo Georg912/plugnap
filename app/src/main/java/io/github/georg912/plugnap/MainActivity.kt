@@ -19,14 +19,22 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -43,11 +51,23 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var previewRunning = false
 
+    private val importSettingsLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri ?: return@registerForActivityResult
+            importSettings(uri)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         prefs = Prefs(this)
         AppCompatDelegate.setDefaultNightMode(prefs.themeMode)
+        // Material You: adopt the system's wallpaper-derived palette on
+        // Android 12+ instead of the fixed purple. No-op on older devices —
+        // moot here anyway since minSdk is 35.
+        DynamicColors.applyToActivityIfAvailable(this)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        applyWindowInsets()
 
         // --- Permissions ---
         findViewById<MaterialButton>(R.id.btnDndAccess).setOnClickListener {
@@ -81,11 +101,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // --- Skip tonight ---
-        findViewById<MaterialButton>(R.id.btnSkip).setOnClickListener {
-            prefs.skipUntil =
-                if (skipActive()) 0L else Schedule.skipUntilMillis(prefs)
-            applyConfiguration()
-        }
+        findViewById<MaterialButton>(R.id.btnSkip).setOnClickListener { toggleSkipTonight() }
 
         // --- Night window ---
         val allDay = findViewById<MaterialSwitch>(R.id.switchAllDay)
@@ -216,6 +232,69 @@ class MainActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnModeSettings).setOnClickListener {
             openModeSettings()
         }
+
+        // --- Backup ---
+        findViewById<MaterialButton>(R.id.btnExportSettings).setOnClickListener { exportSettings() }
+        findViewById<MaterialButton>(R.id.btnImportSettings).setOnClickListener {
+            importSettingsLauncher.launch("*/*")
+        }
+
+        handleShortcutIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShortcutIntent(intent)
+    }
+
+    /** Launched from a long-press launcher shortcut (see xml/shortcuts.xml). */
+    private fun handleShortcutIntent(intent: Intent?) {
+        when (intent?.action) {
+            ACTION_SHORTCUT_SKIP -> toggleSkipTonight()
+            ACTION_SHORTCUT_PREVIEW -> runPreview()
+        }
+    }
+
+    private fun toggleSkipTonight() {
+        prefs.skipUntil = if (skipActive()) 0L else Schedule.skipUntilMillis(prefs)
+        applyConfiguration()
+    }
+
+    /** Writes settings JSON to the cache dir and hands it to the share sheet. */
+    private fun exportSettings() {
+        val file = java.io.File(cacheDir, "plugnap-settings.json")
+        file.writeText(prefs.exportJson())
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = "application/json"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(send, getString(R.string.export_settings)))
+    }
+
+    private fun importSettings(uri: Uri) {
+        val text = try {
+            contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+        } catch (e: Exception) {
+            null
+        }
+        if (text == null) {
+            Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
+            return
+        }
+        try {
+            prefs.importJson(text)
+        } catch (e: Exception) {
+            Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Simplest correct way to reflect a bulk settings change across every
+        // switch/dropdown/per-day row: rebuild the whole screen from prefs.
+        Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
+        applyConfiguration()
+        recreate()
     }
 
     override fun onResume() {
@@ -299,6 +378,22 @@ class MainActivity : AppCompatActivity() {
             }
             save(checked)
             applyConfiguration()
+        }
+    }
+
+    /**
+     * targetSdk 35+ enforces edge-to-edge — without this, content draws
+     * under the status bar and gesture nav bar. Pad the scroll container by
+     * the system bars + cutout insets instead of the fixed inner padding.
+     */
+    private fun applyWindowInsets() {
+        val root = findViewById<View>(R.id.scrollRoot)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+            val bars: Insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.updatePadding(left = bars.left, top = bars.top, right = bars.right, bottom = bars.bottom)
+            windowInsets
         }
     }
 
@@ -531,6 +626,8 @@ class MainActivity : AppCompatActivity() {
         private val GRACE_VALUES = intArrayOf(0, 15, 30, 60, 120)
         private val PLUG_DELAY_VALUES = intArrayOf(0, 60, 120, 300, 600)
         private val MAX_EXTEND_VALUES = intArrayOf(30, 60, 120, 180, 240)
+        private const val ACTION_SHORTCUT_SKIP = "io.github.georg912.plugnap.action.SKIP_TONIGHT"
+        private const val ACTION_SHORTCUT_PREVIEW = "io.github.georg912.plugnap.action.PREVIEW"
         private val THEME_VALUES = intArrayOf(
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
             AppCompatDelegate.MODE_NIGHT_NO,

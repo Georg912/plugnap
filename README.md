@@ -1,5 +1,6 @@
 # PlugNap
 
+[![CI](https://github.com/Georg912/plugnap/actions/workflows/ci.yml/badge.svg)](https://github.com/Georg912/plugnap/actions/workflows/ci.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Georg912/plugnap)](https://github.com/Georg912/plugnap/releases)
 [![Android 15+](https://img.shields.io/badge/Android-15%2B-3DDC84?logo=android&logoColor=white)](#limitations)
@@ -36,7 +37,11 @@ Unplug — or let the night window end — and everything switches back.
   next alarm clock** — optionally extending the mode when you sleep in
   (with a hard cap) — quick-settings tile, 15-second effect preview
 - Notification-filter choice (Priority / Alarms only / Total silence),
-  app theme (system/light/dark), hideable status notification
+  app theme (system/light/dark, with Material You dynamic color on Android
+  12+), hideable status notification
+- **Launcher shortcuts** (long-press the app icon) for "Skip tonight" and
+  the 15-second preview; **settings export/import** (JSON, via the share
+  sheet) to move your tuned schedule to a new phone or back it up
 
 ## How it works
 

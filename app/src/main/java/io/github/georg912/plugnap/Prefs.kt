@@ -161,4 +161,27 @@ class Prefs(context: Context) : ScheduleParams {
     var ruleActive: Boolean
         get() = deviceSp.getBoolean("rule_active", false)
         set(v) = deviceSp.edit().putBoolean("rule_active", v).apply()
+
+    /**
+     * Settings as JSON, for the share-based export/import (device-transfer
+     * without a Seedvault backup, or just moving one's tuned schedule to a
+     * second phone). Deliberately excludes [skipUntil] (a one-night, not a
+     * setting) and the entire device-bound file (ruleId/ruleActive).
+     * Conversion logic itself lives in [PrefsJson] (pure, unit-tested).
+     */
+    fun exportJson(): String = PrefsJson.toJson(sp.all)
+
+    /** Overwrites settings from [exportJson] output. Unknown/malformed keys are skipped. */
+    fun importJson(json: String) {
+        val editor = sp.edit()
+        for ((key, value) in PrefsJson.fromJson(json)) {
+            when (value) {
+                is Boolean -> editor.putBoolean(key, value)
+                is Int -> editor.putInt(key, value)
+                is Long -> editor.putLong(key, value)
+                is String -> editor.putString(key, value)
+            }
+        }
+        editor.apply()
+    }
 }

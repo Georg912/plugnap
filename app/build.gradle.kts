@@ -5,15 +5,15 @@ plugins {
 
 android {
     namespace = "io.github.georg912.plugnap"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.github.georg912.plugnap"
         // ZenDeviceEffects / AutomaticZenRule.Builder only exist from Android 15 (API 35)
         minSdk = 35
-        targetSdk = 35
-        versionCode = 10
-        versionName = "1.6.0"
+        targetSdk = 36
+        versionCode = 11
+        versionName = "1.7.0"
     }
 
     // Release signing: keystore + password are NOT in the repo but in
@@ -55,8 +55,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("com.google.android.material:material:1.14.0")
+    implementation("androidx.transition:transition-ktx:1.5.1")
+    implementation("androidx.activity:activity-ktx:1.9.3")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
 }

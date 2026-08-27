@@ -79,6 +79,7 @@
         <item>Dunkel</item>
     </string-array>
 
+    <string name="shortcut_preview_short">Vorschau</string>
     <string name="skip_tonight">Heute aussetzen</string>
     <string name="resume_skip">Aussetzen beenden</string>
     <string name="status_skipped">Heute ausgesetzt (bis %s).</string>
@@ -116,6 +117,12 @@
     <string name="help_dim_wallpaper">Dunkelt den Hintergrund ab, solange der Modus aktiv ist.</string>
     <string name="help_night_mode">Erzwingt das dunkle Design. Android übernimmt es beim nächsten Ausschalten des Bildschirms.</string>
     <string name="help_filter">Was noch durchdarf: „Nur Priorität“ lässt Wecker, Medien und markierte Kontakte durch; „Nur Wecker“ nur Alarme; „Totale Stille“ gar nichts.</string>
+    <string name="section_backup">Sicherung</string>
+    <string name="help_backup">Einstellungen exportieren, um sie auf ein anderes Gerät zu übertragen oder unabhängig vom Android-Backup zu sichern. Enthält nicht den aktuellen Lade-/Aussetzen-Status.</string>
+    <string name="export_settings">Exportieren</string>
+    <string name="import_settings">Importieren</string>
+    <string name="import_success">Einstellungen importiert.</string>
+    <string name="import_failed">Datei konnte nicht gelesen werden — ist das ein PlugNap-Export?</string>
     <string name="about_title">So funktioniert\'s</string>
     <string name="about_text">PlugNap registriert einen eigenen Modus in den Systemeinstellungen (Modi / Bitte nicht stören) — dort kannst du ihn auch feinjustieren oder manuell schalten.\n\nAkku: Alles ist ereignisgesteuert. Ein kleiner Wächter läuft nur im Nachtfenster und wartet passiv auf Ladegerät-Ereignisse; es gibt kein Polling, dazu zwei Alarme pro Tag für die Fenstergrenzen. Die App hat außerdem keinerlei Internetzugriff.</string>
 

@@ -79,6 +79,7 @@
         <item>Dark</item>
     </string-array>
 
+    <string name="shortcut_preview_short">Preview</string>
     <string name="skip_tonight">Skip tonight</string>
     <string name="resume_skip">Stop skipping</string>
     <string name="status_skipped">Skipped tonight (until %s).</string>
@@ -116,6 +117,12 @@
     <string name="help_dim_wallpaper">Darkens the wallpaper while the mode is active.</string>
     <string name="help_night_mode">Forces the dark theme. Android applies it the next time the screen turns off.</string>
     <string name="help_filter">What may still disturb you: “Priority only” lets alarms, media and starred contacts through; “Alarms only” just alarms; “Total silence” nothing at all.</string>
+    <string name="section_backup">Backup</string>
+    <string name="help_backup">Export your settings to move them to another device, or as a backup outside of Android\'s own backup. Does not include the current charging/skip state.</string>
+    <string name="export_settings">Export</string>
+    <string name="import_settings">Import</string>
+    <string name="import_success">Settings imported.</string>
+    <string name="import_failed">Could not read this file — is it a PlugNap export?</string>
     <string name="about_title">How it works</string>
     <string name="about_text">PlugNap registers its own mode in the system settings (Modes / Do Not Disturb) — you can fine-tune or toggle it manually there too.\n\nBattery: everything is event-driven. A small watcher runs only during the night window and just waits for charger events; there is no polling, plus two alarms per day for the window boundaries. The app has no internet access at all.</string>
 

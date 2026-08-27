@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Skip next" glyph (Material Icons, Apache-2.0), on a filled circle so it
+     reads correctly as a standalone launcher shortcut icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#1A237E"
+        android:pathData="M24,2A22,22 0,1 0,24 46A22,22 0,1 0,24 2Z" />
+    <group android:translateX="12" android:translateY="12">
+        <path
+            android:fillColor="#FFF8E1"
+            android:pathData="M6,18l8.5,-6L6,6v12zM16,6v12h2V6h-2z" />
+    </group>
+</vector>

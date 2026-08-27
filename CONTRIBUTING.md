@@ -16,3 +16,24 @@ Thanks for your interest! / Danke für dein Interesse!
   metadata are also maintained in German.
 - **License:** by contributing you agree that your contribution is released
   under GPL-3.0-or-later.
+
+## Translations
+
+New languages are very welcome — the app is structured for it:
+
+1. App UI strings: `app/src/main/res/values/strings.xml` — copy it to a new
+   `values-<language-code>/strings.xml` (e.g. `values-fr` for French) and
+   translate the `<string>`/`<string-array>` values. Don't translate the
+   `name="…"` attributes or `%s`/`%d` placeholders.
+2. Store listing: `fastlane/metadata/android/en-US/` — copy the folder to
+   `fastlane/metadata/android/<language-code>/` (F-Droid/IzzyOnDroid locale
+   codes, e.g. `fr-FR`) and translate `title.txt`, `short_description.txt`,
+   `full_description.txt`. Screenshots and `changelogs/` are optional to
+   translate — falling back to `en-US` is fine.
+3. Open a pull request with both. If you only have time for one, the app
+   UI (1) matters more than the store listing (2).
+
+CI (`.github/workflows/ci.yml`) builds and lints every PR, so a missing
+string resource or malformed XML is caught automatically. A Weblate
+instance may be set up later if there's enough translator interest — for
+now, PRs are the way in.

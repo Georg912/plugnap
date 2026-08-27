@@ -1,0 +1,1 @@
+Bugfix release, plus a batch of polish: Material You dynamic colors, edge-to-edge layout, launcher shortcuts (Skip tonight / Preview), settings export & import, CI on every commit, compileSdk/targetSdk 36. Fixed: a subtle Android framework interaction could silently revert other settings whenever the app theme changed or settings were imported.

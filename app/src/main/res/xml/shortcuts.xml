@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static launcher shortcuts (long-press the app icon). Both point at
+     MainActivity with a distinct action; handled in onCreate/onNewIntent. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="skip_tonight"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_skip"
+        android:shortcutShortLabel="@string/skip_tonight"
+        android:shortcutLongLabel="@string/skip_tonight">
+        <intent
+            android:action="io.github.georg912.plugnap.action.SKIP_TONIGHT"
+            android:targetPackage="io.github.georg912.plugnap"
+            android:targetClass="io.github.georg912.plugnap.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="preview"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_preview"
+        android:shortcutShortLabel="@string/shortcut_preview_short"
+        android:shortcutLongLabel="@string/preview_button">
+        <intent
+            android:action="io.github.georg912.plugnap.action.PREVIEW"
+            android:targetPackage="io.github.georg912.plugnap"
+            android:targetClass="io.github.georg912.plugnap.MainActivity" />
+    </shortcut>
+</shortcuts>
