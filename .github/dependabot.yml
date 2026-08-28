@@ -4,16 +4,37 @@ updates:
   # runs on every PR Dependabot opens, so a bad bump gets caught before
   # merge — see docs/reproducible-builds.md for why versions are pinned
   # exactly rather than left open.
+  #
+  # Major-version bumps (AGP, the Gradle wrapper itself, AndroidX majors)
+  # are deliberately NOT auto-PR'd: this project pins exact versions and
+  # upgrades them one at a time, on purpose, after checking compatibility
+  # (e.g. core-ktx 1.19.0 needs AGP 9.1+/compileSdk 37, which we're not on
+  # yet — that PR just produced a red CI run and an email for no benefit).
+  # Minor/patch bumps are usually safe and are grouped into one weekly PR
+  # instead of one-per-dependency, to keep notification volume sane for a
+  # solo-maintained repo.
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
     labels: ["dependencies"]
+    groups:
+      gradle-minor-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # Keep the third-party actions used in .github/workflows/ci.yml current.
+  # Actions are lower-stakes than the Gradle toolchain (CI fully validates
+  # them, and a bad bump only breaks CI, never the app) — grouped into one
+  # PR regardless of bump size, instead of one PR per action.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     labels: ["dependencies", "ci"]
+    groups:
+      github-actions:
+        patterns: ["*"]
