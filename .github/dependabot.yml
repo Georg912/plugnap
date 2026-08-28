@@ -5,14 +5,18 @@ updates:
   # merge — see docs/reproducible-builds.md for why versions are pinned
   # exactly rather than left open.
   #
-  # Major-version bumps (AGP, the Gradle wrapper itself, AndroidX majors)
-  # are deliberately NOT auto-PR'd: this project pins exact versions and
-  # upgrades them one at a time, on purpose, after checking compatibility
-  # (e.g. core-ktx 1.19.0 needs AGP 9.1+/compileSdk 37, which we're not on
-  # yet — that PR just produced a red CI run and an email for no benefit).
-  # Minor/patch bumps are usually safe and are grouped into one weekly PR
-  # instead of one-per-dependency, to keep notification volume sane for a
-  # solo-maintained repo.
+  # Build-tooling packages (AGP, the Kotlin Gradle plugin, the Gradle
+  # wrapper itself, and core-ktx — which effectively dictates the required
+  # compileSdk) are excluded from auto-PRs ENTIRELY, not just on major
+  # bumps: semver "minor" releases for these routinely break the build
+  # (e.g. Kotlin 2.0.21 -> 2.4.10 turned the old `jvmTarget: String` DSL
+  # into a hard compile error; core-ktx 1.16.0 -> 1.19.0 silently requires
+  # AGP 9.1+/compileSdk 37, which this project isn't on). Bumping any of
+  # these needs a deliberate, coordinated check across all of them at
+  # once — exactly what a real upgrade session (not a bot) is for.
+  #
+  # Everything else (application-facing AndroidX libraries) behaves like a
+  # normal library and is grouped into one weekly PR.
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
@@ -20,11 +24,18 @@ updates:
     open-pull-requests-limit: 5
     labels: ["dependencies"]
     groups:
-      gradle-minor-patch:
-        update-types: ["minor", "patch"]
+      androidx-libs:
+        patterns: ["*"]
+        exclude-patterns:
+          - "com.android.application"
+          - "org.jetbrains.kotlin.android"
+          - "gradle-wrapper"
+          - "androidx.core:core-ktx"
     ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.android.application"
+      - dependency-name: "org.jetbrains.kotlin.android"
+      - dependency-name: "gradle-wrapper"
+      - dependency-name: "androidx.core:core-ktx"
 
   # Keep the third-party actions used in .github/workflows/ci.yml current.
   # Actions are lower-stakes than the Gradle toolchain (CI fully validates
