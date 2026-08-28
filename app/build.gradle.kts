@@ -61,5 +61,5 @@ dependencies {
     implementation("androidx.transition:transition-ktx:1.5.1")
     implementation("androidx.activity:activity-ktx:1.9.3")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
 }
