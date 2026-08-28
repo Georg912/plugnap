@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest an idea for PlugNap.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation or annoyance that led you here — not the solution yet.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like PlugNap to do instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything you've already tried or considered?
+      description: E.g. an existing setting that almost covers it, or another app.

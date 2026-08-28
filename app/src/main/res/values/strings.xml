@@ -124,6 +124,7 @@
     <string name="import_success">Settings imported.</string>
     <string name="import_failed">Could not read this file — is it a PlugNap export?</string>
     <string name="about_title">How it works</string>
+    <string name="version_label">PlugNap %s — include this when reporting a bug</string>
     <string name="about_text">PlugNap registers its own mode in the system settings (Modes / Do Not Disturb) — you can fine-tune or toggle it manually there too.\n\nBattery: everything is event-driven. A small watcher runs only during the night window and just waits for charger events; there is no polling, plus two alarms per day for the window boundaries. The app has no internet access at all.</string>
 
     <string name="notification_channel">Bedtime watcher</string>

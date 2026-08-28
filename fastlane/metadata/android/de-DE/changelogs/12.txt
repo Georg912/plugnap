@@ -1,0 +1,1 @@
+Die App-Version wird jetzt am unteren Bildschirmrand angezeigt (für Fehlermeldungen). Repo-Pflege: GitHub-Vorlagen für Issues/PRs und automatische Abhängigkeits-Updates — sonst keine sichtbaren Änderungen.

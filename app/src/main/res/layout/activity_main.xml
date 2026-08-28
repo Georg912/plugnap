@@ -559,5 +559,14 @@
             android:padding="16dp"
             android:layout_marginBottom="8dp"
             android:text="@string/about_text" />
+
+        <TextView
+            android:id="@+id/textVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 </ScrollView>

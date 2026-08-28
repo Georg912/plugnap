@@ -124,6 +124,7 @@
     <string name="import_success">Einstellungen importiert.</string>
     <string name="import_failed">Datei konnte nicht gelesen werden — ist das ein PlugNap-Export?</string>
     <string name="about_title">So funktioniert\'s</string>
+    <string name="version_label">PlugNap %s — bei Fehlermeldungen bitte mit angeben</string>
     <string name="about_text">PlugNap registriert einen eigenen Modus in den Systemeinstellungen (Modi / Bitte nicht stören) — dort kannst du ihn auch feinjustieren oder manuell schalten.\n\nAkku: Alles ist ereignisgesteuert. Ein kleiner Wächter läuft nur im Nachtfenster und wartet passiv auf Ladegerät-Ereignisse; es gibt kein Polling, dazu zwei Alarme pro Tag für die Fenstergrenzen. Die App hat außerdem keinerlei Internetzugriff.</string>
 
     <string name="notification_channel">Lade-Überwachung</string>

@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Gradle/AndroidX dependencies. CI (test + lintRelease + assembleDebug)
+  # runs on every PR Dependabot opens, so a bad bump gets caught before
+  # merge — see docs/reproducible-builds.md for why versions are pinned
+  # exactly rather than left open.
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies"]
+
+  # Keep the third-party actions used in .github/workflows/ci.yml current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "ci"]

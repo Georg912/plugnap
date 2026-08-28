@@ -1,0 +1,1 @@
+The app version is now shown at the bottom of the screen (for bug reports). Repository housekeeping: GitHub issue/PR templates and automated dependency updates — no user-facing changes otherwise.

@@ -239,6 +239,9 @@ class MainActivity : AppCompatActivity() {
             importSettingsLauncher.launch("*/*")
         }
 
+        findViewById<TextView>(R.id.textVersion).text =
+            getString(R.string.version_label, versionName())
+
         handleShortcutIntent(intent)
     }
 
@@ -395,6 +398,14 @@ class MainActivity : AppCompatActivity() {
             view.updatePadding(left = bars.left, top = bars.top, right = bars.right, bottom = bars.bottom)
             windowInsets
         }
+    }
+
+    /** For the version line at the bottom — helps triage bug reports. */
+    private fun versionName(): String = try {
+        packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            .versionName ?: "?"
+    } catch (e: PackageManager.NameNotFoundException) {
+        "?"
     }
 
     private fun checkedAlarmMode(group: MaterialButtonToggleGroup): AlarmEndMode =

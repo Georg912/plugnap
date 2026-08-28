@@ -12,8 +12,8 @@ android {
         // ZenDeviceEffects / AutomaticZenRule.Builder only exist from Android 15 (API 35)
         minSdk = 35
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.7.0"
+        versionCode = 12
+        versionName = "1.7.1"
     }
 
     // Release signing: keystore + password are NOT in the repo but in
