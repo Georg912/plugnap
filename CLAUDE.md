@@ -42,16 +42,23 @@ delay) are doze-safe wakeup alarms (`ACTION_REEVALUATE`), never
 | `MainActivity.kt` | Single-screen settings UI; per-day rows built programmatically |
 | `NoFilterAdapter.kt` | Dropdown adapter — see regression rules below |
 
-Tests: `app/src/test/…/ScheduleTest.kt` (window/alarm math, 34 cases) and
-`DropdownMappingTest.kt`. Run with `./gradlew test` — pure JVM, no emulator.
+Tests: `app/src/test/…/ScheduleTest.kt` (window/alarm math, 34 cases),
+`DropdownMappingTest.kt`, `PrefsJsonTest.kt` (export/import round-trip) —
+pure JVM, no emulator, run with `./gradlew test`.
+
+`app/src/androidTest/…/MainActivityStateTest.kt` — real Activity-lifecycle
+regression tests (recreate() reverting switch/toggle state; see rule 8
+below) that no unit test can catch. Needs a device/emulator:
+`./gradlew connectedDebugAndroidTest`.
 
 ## Commands
 
 ```bash
-./gradlew test                 # JVM unit tests (must stay green)
-./gradlew lintRelease          # only cosmetic findings are acceptable
-./gradlew assembleDebug        # debug APK
-./gradlew assembleRelease      # signed iff ZENDOCK_* properties exist in ~/.gradle/gradle.properties
+./gradlew test                       # JVM unit tests (must stay green)
+./gradlew lintRelease                # only cosmetic findings are acceptable
+./gradlew assembleDebug               # debug APK
+./gradlew assembleRelease             # signed iff ZENDOCK_* properties exist in ~/.gradle/gradle.properties
+./gradlew connectedDebugAndroidTest   # instrumented tests; needs a booted emulator/device
 ```
 
 Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
@@ -74,6 +81,17 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
    channel** (Android re-bumps IMPORTANCE_NONE on FGS channels on its own).
 7. `zen_mode` in `settings get global` lags the actual rule state by ~1 s —
    generous waits in emulator assertions.
+8. **Every stateful widget needs `android:saveEnabled="false"`.** Android
+   restores each switch/checkbox/toggle-group's OWN instance state after
+   `recreate()` — AFTER `onCreate()` already set it from `Prefs` and
+   attached listeners — which re-fires the listener with the PRE-recreate
+   value and silently reverts it. Triggered not just by explicit
+   `recreate()` calls (settings import) but also by
+   `AppCompatDelegate.setDefaultNightMode()` on a real theme change. Setting
+   `saveEnabled=false` on a parent container is NOT sufficient — it must be
+   on each individual widget. `MainActivityStateTest` guards this
+   regression class; a new switch/toggle added without the attribute will
+   fail CI instead of shipping the bug again.
 
 ## Language & release conventions
 
@@ -82,8 +100,17 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
   `values-de`, fastlane `de-DE`, release notes bilingual (EN first).
 - Release checklist: bump `versionCode`/`versionName` → add
   `fastlane/metadata/android/{en-US,de-DE}/changelogs/<versionCode>.txt` →
-  `test` + `lintRelease` + `assembleRelease` → emulator smoke test →
-  commit → tag `vX.Y.Z` → `gh release create` with bilingual notes + APK.
+  `test` + `lintRelease` + `assembleDebug` + `connectedDebugAndroidTest`
+  locally → commit → `git tag vX.Y.Z && git push origin vX.Y.Z`.
+  Pushing the tag triggers `.github/workflows/release.yml`, which builds
+  the signed release APK **in CI** (keystore decoded from
+  `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD` secrets — the
+  keystore itself never leaves the runner's filesystem) and attaches it
+  to the GitHub Release for that tag. **Building/signing locally and
+  running `gh release create ... <apk>` is no longer the normal path** —
+  only write/edit the bilingual release notes afterward with
+  `gh release edit vX.Y.Z --notes-file -` once the workflow has attached
+  the APK (check with `gh run list` / the repo's Actions tab).
 - Fastlane metadata must stay symmetric across en-US/de-DE (title, both
   descriptions, icon.png, screenshots, changelogs) — IzzyOnDroid/F-Droid
   render from it. F-Droid recipe: `docs/fdroid-metadata.yml`.
