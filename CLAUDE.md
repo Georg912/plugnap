@@ -51,6 +51,13 @@ regression tests (recreate() reverting switch/toggle state; see rule 8
 below) that no unit test can catch. Needs a device/emulator:
 `./gradlew connectedDebugAndroidTest`.
 
+`app/src/androidTest/…/PrefsExportImportRoundTripTest.kt` — "exact-restore"
+test: sets every exported field away from its default, exports, wipes real
+SharedPreferences, imports, asserts everything is back — and that
+device-bound state (ruleId/ruleActive) and skipUntil stay excluded. Catches
+what `PrefsJsonTest.kt` structurally can't: that test only exercises the
+pure JSON layer, never a real Context/SharedPreferences round trip.
+
 ## Commands
 
 ```bash
