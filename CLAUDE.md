@@ -124,6 +124,19 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
 - Never put personal email addresses into commits or files; author identity
   is the GitHub noreply address.
 
+## Rejected alternatives (so this doesn't get re-litigated)
+
+- **Exact alarms, not `WorkManager`.** IzzyOnDroid's review often pushes
+  back on `SCHEDULE_EXACT_ALARM` (Android 14+ denies it to new apps by
+  default). Considered switching the window-boundary/grace-period timers to
+  `WorkManager` periodic work to avoid that friction — rejected: the window
+  start/end are user-set clock times the app must hit to the minute, not a
+  "run sometime in this interval" reminder. `WorkManager`'s minimum
+  granularity and deferral under Doze/battery-saver would make the bedtime
+  mode activate/deactivate at the wrong time, which defeats the app's one
+  job. State this rationale up front in the IzzyOnDroid inclusion issue
+  rather than waiting to be asked (see `docs/fdroid-metadata.yml`).
+
 ## Known limitations (documented, not bugs)
 
 - `TYPE_BEDTIME` is reserved for the system wellbeing app → rule uses

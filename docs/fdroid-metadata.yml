@@ -1,6 +1,14 @@
 # F-Droid build recipe for PlugNap.
 # Destination: fdroiddata repo as metadata/io.github.georg912.plugnap.yml
 # (this copy is kept here for reference/maintenance)
+#
+# Uses AlarmManager.setExactAndAllowWhileIdle (SCHEDULE_EXACT_ALARM) to
+# bound the night window and to run the doze-safe unplug-grace/plug-in-delay
+# timers (see CLAUDE.md rule 1). This is not swappable for WorkManager: the
+# window boundaries are user-set clock times the app must hit to the
+# minute, not a periodic "run sometime in this interval" reminder — the use
+# case IzzyOnDroid's exact-alarm review usually pushes back on. Mention this
+# up front in the inclusion issue if asked.
 
 Categories:
   - System
@@ -17,14 +25,14 @@ RepoType: git
 Repo: https://github.com/Georg912/plugnap.git
 
 Builds:
-  - versionName: 1.4.1
-    versionCode: 7
-    commit: v1.4.1
+  - versionName: 1.7.1
+    versionCode: 12
+    commit: v1.7.1
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.4.1
-CurrentVersionCode: 7
+CurrentVersion: 1.7.1
+CurrentVersionCode: 12
