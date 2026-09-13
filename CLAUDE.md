@@ -137,6 +137,20 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
   job. State this rationale up front in the IzzyOnDroid inclusion issue
   rather than waiting to be asked (see `docs/fdroid-metadata.yml`).
 
+## Verified (not just written)
+
+- **`data_extraction_rules.xml` exclusion, real backup/restore cycle.**
+  Verified via `bmgr` on the local transport (`bmgr transport
+  com.android.localtransport/.LocalTransport` → launch the app once so it's
+  not in the "stopped" state, a fresh install is → `bmgr backupnow <pkg>` →
+  `pm clear <pkg>` → `bmgr restore 1 <pkg>`): `zendock.xml` (settings)
+  comes back intact, `zendock_device.xml` (ruleId/ruleActive) does not
+  exist at all afterwards, and the app launches cleanly with it missing.
+  This exercises the actual OS backup transport, not just the JSON
+  export/import feature (see `PrefsExportImportRoundTripTest.kt` above,
+  which is a different code path — app-level JSON sharing, not Auto
+  Backup/device-transfer).
+
 ## Known limitations (documented, not bugs)
 
 - `TYPE_BEDTIME` is reserved for the system wellbeing app → rule uses
