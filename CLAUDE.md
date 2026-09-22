@@ -51,6 +51,13 @@ regression tests (recreate() reverting switch/toggle state; see rule 8
 below) that no unit test can catch. Needs a device/emulator:
 `./gradlew connectedDebugAndroidTest`.
 
+Instrumented-test rules: use JUnit `assertTrue`/`assertEquals`, **never
+Kotlin's `assert()`** (a silent no-op on ART, JVM assertions are off on
+Android). Never wait a fixed time for a popup, poll for it (see
+`selectTheme()`); GitHub's CI emulator is much slower than a local one and
+may still hold keyguard/system-dialog focus at test start, which
+`makeSureTheAppCanGetFocus()` clears.
+
 `app/src/androidTest/…/PrefsExportImportRoundTripTest.kt` — "exact-restore"
 test: sets every exported field away from its default, exports, wipes real
 SharedPreferences, imports, asserts everything is back — and that
