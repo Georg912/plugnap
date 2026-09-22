@@ -1,10 +1,13 @@
 package io.github.georg912.plugnap
 
 import android.content.Context
+import android.os.ParcelFileDescriptor
+import android.os.SystemClock
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
@@ -20,6 +23,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import org.hamcrest.Matcher
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,6 +54,19 @@ class MainActivityStateTest {
     val notificationPermissionRule: GrantPermissionRule =
         GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
 
+    /**
+     * CI emulators (GitHub runners, freshly booted, slow) sometimes still show
+     * the keyguard or a "System UI isn't responding" dialog when the tests
+     * start. Either one holds window focus, and every Espresso interaction
+     * then dies with RootViewWithoutFocusException (seen on CI, 2026-09-13).
+     */
+    @Before
+    fun makeSureTheAppCanGetFocus() {
+        shell("input keyevent KEYCODE_WAKEUP")
+        shell("wm dismiss-keyguard")
+        shell("am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS")
+    }
+
     @Before
     fun resetPrefs() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -67,7 +84,7 @@ class MainActivityStateTest {
 
             onView(withId(R.id.switchAllDay)).check(matches(isChecked()))
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            assert(Prefs(context).allDay) { "allDay reverted to false after recreate()" }
+            assertTrue("allDay reverted to false after recreate()", Prefs(context).allDay)
         }
     }
 
@@ -81,9 +98,7 @@ class MainActivityStateTest {
 
             onView(withId(R.id.btnModeWeekend)).check(matches(isChecked()))
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            assert(Prefs(context).mode == ScheduleMode.WEEKEND) {
-                "schedule mode reverted away from WEEKEND after recreate()"
-            }
+            assertTrue("schedule mode reverted away from WEEKEND after recreate()", Prefs(context).mode == ScheduleMode.WEEKEND)
         }
     }
 
@@ -111,24 +126,42 @@ class MainActivityStateTest {
 
             onView(withId(R.id.switchGrayscale)).check(matches(isNotChecked()))
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            assert(!Prefs(context).grayscale) {
-                "grayscale reverted back to true after an app-theme-triggered recreate()"
-            }
-            assert(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            assertTrue("grayscale reverted back to true after an app-theme-triggered recreate()", !Prefs(context).grayscale)
+            assertTrue(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
+    /**
+     * Opens the theme dropdown and picks [label]. The popup's show animation
+     * can take far longer than a fixed sleep on a slow CI emulator
+     * (NoMatchingRootException on CI with a 200 ms wait), so this polls for
+     * the popup instead, and reopens the dropdown if the first tap was lost.
+     */
     private fun selectTheme(label: String) {
-        onView(withId(R.id.dropdownTheme)).perform(scrollTo(), click())
-        // The exposed-dropdown popup's show animation occasionally isn't
-        // fully attached yet by the time Espresso looks for its root,
-        // especially on a field that was just reopened after a previous
-        // selection (NoMatchingRootException, seen once in local testing).
-        // loopMainThreadForAtLeast is the Espresso-sanctioned way to wait a
-        // fixed, short amount of time without breaking idle synchronization
-        // the way a raw Thread.sleep would.
-        onView(isRoot()).perform(waitFor(200))
-        onView(withText(label)).inRoot(isPlatformPopup()).perform(click())
+        repeat(3) { attempt ->
+            onView(withId(R.id.dropdownTheme)).perform(scrollTo(), click())
+            val deadline = SystemClock.uptimeMillis() + 3_000
+            while (true) {
+                try {
+                    onView(withText(label)).inRoot(isPlatformPopup()).perform(click())
+                    return
+                } catch (e: NoMatchingRootException) {
+                    if (SystemClock.uptimeMillis() > deadline) {
+                        if (attempt == 2) throw e
+                        break
+                    }
+                    // loopMainThreadForAtLeast, unlike Thread.sleep, keeps
+                    // Espresso's idle synchronization intact
+                    onView(isRoot()).perform(waitFor(100))
+                }
+            }
+        }
+    }
+
+    private fun shell(command: String) {
+        val pfd = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+        // reading to EOF waits for the command to finish
+        ParcelFileDescriptor.AutoCloseInputStream(pfd).use { it.readBytes() }
     }
 
     private fun waitFor(millis: Long): ViewAction = object : ViewAction {
