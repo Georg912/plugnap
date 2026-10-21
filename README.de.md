@@ -4,6 +4,8 @@
 
 **Bedtime-Modus beim Laden — für Android 15+ (gebaut für GrapheneOS auf dem Pixel).**
 
+[<img src="docs/images/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Georg912/plugnap)
+
 <p>
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" alt="Hauptbildschirm">
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Einstellungen">
@@ -97,8 +99,12 @@ Updates lassen sich nur mit demselben Schlüssel installieren.
 
 ## Installieren
 
-**Empfohlen: [Obtainium](https://github.com/ImranR98/Obtainium).** Dieses
-Repository als App-Quelle hinzufügen:
+**Empfohlen: [Obtainium](https://github.com/ImranR98/Obtainium).** Auf dem
+Handy auf den Button tippen, um PlugNap mit einem Klick hinzuzufügen:
+
+[<img src="docs/images/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Georg912/plugnap)
+
+…oder dieses Repository von Hand als App-Quelle eintragen:
 
 ```
 https://github.com/Georg912/plugnap

@@ -9,6 +9,8 @@
 
 **Bedtime mode while charging — for Android 15+ (built for GrapheneOS on the Pixel).**
 
+[<img src="docs/images/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Georg912/plugnap)
+
 <p>
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" alt="Main screen">
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" alt="Settings">
@@ -100,8 +102,12 @@ keystore!** Updates can only be installed with the same key.
 
 ## Installing
 
-**Recommended: [Obtainium](https://github.com/ImranR98/Obtainium).** Add
-this repository as an app source:
+**Recommended: [Obtainium](https://github.com/ImranR98/Obtainium).** On
+your phone, tap the button to add PlugNap in one step:
+
+[<img src="docs/images/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Georg912/plugnap)
+
+…or add this repository as an app source by hand:
 
 ```
 https://github.com/Georg912/plugnap
