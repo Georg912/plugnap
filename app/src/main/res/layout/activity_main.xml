@@ -253,12 +253,28 @@
             android:orientation="vertical"
             android:layout_marginBottom="8dp" />
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchEndAtAlarm"
-            android:saveEnabled="false"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/end_at_alarm" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchEndAtAlarm"
+                android:saveEnabled="false"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/end_at_alarm" />
+
+            <ImageButton
+                android:id="@+id/btnAlarmInfo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/alarm_info_title"
+                android:src="@drawable/ic_info" />
+        </LinearLayout>
 
         <TextView
             style="@style/HelpText"

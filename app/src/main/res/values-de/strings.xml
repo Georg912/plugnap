@@ -27,7 +27,9 @@
     <string name="copied_to_all">Zeiten auf alle aktiven Tage übertragen.</string>
     <string name="status_no_window">Kein Nachtfenster aktiv — alle Tage sind ausgeschaltet.</string>
     <string name="end_at_alarm">Beim nächsten Wecker beenden</string>
-    <string name="help_end_at_alarm">Endet zur Weckerzeit statt zum Fensterende. „Nur später" verlängert den Modus, wenn du länger schläfst — begrenzt durch „Höchstens verlängern".</string>
+    <string name="help_end_at_alarm">Dein nächster Wecker darf das Ende der Nacht verschieben. Tipp auf ⓘ für Beispiele.</string>
+    <string name="alarm_info_title">Wie der Wecker das Ende verschiebt</string>
+    <string name="alarm_info_text">Gemeint ist der nächste Wecker aus deiner Uhr-App (der mit dem Wecker-Symbol in der Statusleiste).\n\nBeispiel: Fenster endet um 07:00, „Höchstens verlängern“ ist 2 Stunden.\n\n<b>Nur früher</b> — der Wecker darf das Ende nur vorziehen.\n• Wecker 06:15 → Modus endet um 06:15\n• Wecker 08:30 → endet trotzdem um 07:00\nPraktisch, wenn du manchmal früher raus musst.\n\n<b>Nur später</b> — der Wecker darf das Ende nur nach hinten schieben.\n• Wecker 06:15 → endet trotzdem um 07:00\n• Wecker 08:30 → endet um 08:30\nPraktisch zum Ausschlafen: Es bleibt ruhig, bis der Wecker läutet.\n\n<b>Immer</b> — der Modus endet immer zur Weckerzeit.\n• Wecker 06:15 → endet um 06:15\n• Wecker 08:30 → endet um 08:30\n\nKein Wecker in dieser Nacht, oder einer, der mehr als „Höchstens verlängern“ nach dem Fensterende liegt (z. B. 10:00): Der Modus endet normal um 07:00. Dasselbe gilt, wenn du den Wecker abstellst oder löschst — und ist 07:00 schon vorbei, endet der Modus sofort.</string>
     <string name="alarm_shorten">Nur früher</string>
     <string name="alarm_extend">Nur später</string>
     <string name="alarm_follow">Immer</string>

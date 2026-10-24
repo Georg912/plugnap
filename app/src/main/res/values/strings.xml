@@ -27,7 +27,9 @@
     <string name="copied_to_all">Times copied to all enabled days.</string>
     <string name="status_no_window">No night window is active — all days are turned off.</string>
     <string name="end_at_alarm">End at next alarm clock</string>
-    <string name="help_end_at_alarm">Ends at your alarm clock instead of the window end. "Later only" keeps the mode on when you sleep in — limited by "Extend at most".</string>
+    <string name="help_end_at_alarm">Lets your next alarm move the end of the night. Tap ⓘ for examples.</string>
+    <string name="alarm_info_title">How the alarm changes the end</string>
+    <string name="alarm_info_text">\"Alarm\" means the next alarm from your clock app (the one with the alarm icon in the status bar).\n\nExample: window ends at 07:00, \"Extend at most\" is 2 hours.\n\n<b>Earlier only</b> — the alarm can only bring the end forward.\n• Alarm 06:15 → mode ends at 06:15\n• Alarm 08:30 → still ends at 07:00\nUseful if you sometimes have to get up early.\n\n<b>Later only</b> — the alarm can only push the end back.\n• Alarm 06:15 → still ends at 07:00\n• Alarm 08:30 → ends at 08:30\nUseful for sleeping in: it stays quiet until your alarm rings.\n\n<b>Always</b> — the mode always ends at the alarm.\n• Alarm 06:15 → ends at 06:15\n• Alarm 08:30 → ends at 08:30\n\nNo alarm tonight, or one more than \"Extend at most\" after the window end (e.g. 10:00): the mode ends normally at 07:00. The same applies if you switch the alarm off or delete it — and if 07:00 has already passed, the mode ends right away.</string>
     <string name="alarm_shorten">Earlier only</string>
     <string name="alarm_extend">Later only</string>
     <string name="alarm_follow">Always</string>

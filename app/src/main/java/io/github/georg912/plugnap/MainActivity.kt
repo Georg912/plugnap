@@ -35,6 +35,7 @@ import androidx.transition.TransitionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -159,6 +160,13 @@ class MainActivity : AppCompatActivity() {
                 else -> R.id.btnAlarmShorten
             }
         )
+        findViewById<View>(R.id.btnAlarmInfo).setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.alarm_info_title)
+                .setMessage(getText(R.string.alarm_info_text))
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+        }
         endAtAlarm.setOnCheckedChangeListener { _, checked ->
             prefs.alarmEndMode =
                 if (!checked) AlarmEndMode.OFF else checkedAlarmMode(toggleAlarm)
