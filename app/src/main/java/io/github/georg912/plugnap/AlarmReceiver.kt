@@ -41,7 +41,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
             }
             AlarmScheduler.ACTION_SKIP_TONIGHT -> {
-                prefs.skipUntil = Schedule.skipUntilMillis(prefs)
+                prefs.skipUntil =
+                    Schedule.skipUntilMillis(prefs, AlarmScheduler.nextAlarmClockTime(context))
                 ZenRuleManager.setActive(context, false)
                 // Nudge the running service so the notification shows the
                 // skip state (the service is already foreground).

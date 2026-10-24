@@ -63,7 +63,10 @@ jobs:
         run: |
           APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
           "$ANDROID_HOME"/build-tools/36.0.0/apksigner verify "$APK"
-          echo "apk_path=$APK" >> "$GITHUB_ENV"
+          # Same asset name as the hand-made releases before (plugnap-vX.Y.Z.apk)
+          OUT="$RUNNER_TEMP/plugnap-${GITHUB_REF_NAME}.apk"
+          cp "$APK" "$OUT"
+          echo "apk_path=$OUT" >> "$GITHUB_ENV"
 
       # Attaches the APK to the release matching this tag. If the release
       # doesn't exist yet, this creates a bare one — the human-written

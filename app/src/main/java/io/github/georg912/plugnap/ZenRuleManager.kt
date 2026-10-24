@@ -101,10 +101,20 @@ object ZenRuleManager {
         }
     }
 
-    /** Activates or deactivates the rule (charger in/out). */
-    fun setActive(context: Context, active: Boolean) {
+    /**
+     * Activates or deactivates the rule (charger in/out).
+     *
+     * [userAction]: an explicit tap (tile, preview). If the user switched the
+     * mode off in the system while our condition was still TRUE, the system
+     * holds a "deactivated" override that ignores a repeated TRUE — sending
+     * FALSE first clears it, so the tap actually switches the mode on.
+     */
+    fun setActive(context: Context, active: Boolean, userAction: Boolean = false) {
         val nm = context.getSystemService(NotificationManager::class.java)
         val id = ensureRule(context) ?: return
+        if (active && userAction && Prefs(context).ruleActive && !isActive(context)) {
+            setActive(context, false)
+        }
         val summary = context.getString(
             if (active) R.string.condition_active else R.string.condition_inactive
         )
@@ -121,6 +131,19 @@ object ZenRuleManager {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to set zen rule state", e)
         }
+    }
+
+    /**
+     * Whether the mode is really on right now, as the system sees it. The
+     * cached [Prefs.ruleActive] goes stale as soon as the user switches the
+     * mode off elsewhere (Modes settings, the system's DND/Modes tile).
+     */
+    fun isActive(context: Context): Boolean {
+        val id = Prefs(context).ruleId ?: return false
+        return runCatching {
+            context.getSystemService(NotificationManager::class.java)
+                .getAutomaticZenRuleState(id) == Condition.STATE_TRUE
+        }.getOrElse { Prefs(context).ruleActive }
     }
 
     /** Removes the rule entirely (when the app is disabled). */

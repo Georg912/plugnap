@@ -134,6 +134,21 @@ object Schedule {
     fun nextEffectiveEnd(now: LocalDateTime, p: ScheduleParams, alarm: LocalDateTime?): LocalDateTime =
         currentWindow(now, p, alarm)?.end ?: nextEnd(now, p)
 
+    /**
+     * The window [now] is in, or else the next one to start — both with
+     * their alarm-adjusted end. Null only if every day is off.
+     */
+    fun currentOrNextWindow(now: LocalDateTime, p: ScheduleParams, alarm: LocalDateTime?): Window? {
+        currentWindow(now, p, alarm)?.let { return it }
+        for (i in 0..7L) {
+            val w = windowFor(now.toLocalDate().plusDays(i), p)
+            if (w.start.isAfter(now) && w.end.isAfter(w.start)) {
+                return Window(w.start, effectiveEnd(w, alarm, p))
+            }
+        }
+        return null
+    }
+
     /** True if PER_DAY mode has every single day disabled (start == end). */
     fun allDaysOff(p: ScheduleParams): Boolean =
         p.mode == ScheduleMode.PER_DAY &&
@@ -142,8 +157,14 @@ object Schedule {
     fun toEpochMillis(dt: LocalDateTime): Long =
         dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-    /** Until when "skip tonight" should last. */
-    fun skipUntilMillis(p: ScheduleParams): Long =
-        if (p.allDay) System.currentTimeMillis() + 8 * 3600_000L
-        else toEpochMillis(nextEnd(LocalDateTime.now(), p))
+    /**
+     * Until when "skip tonight" should last: the end of tonight's window
+     * including an alarm extension — otherwise a re-plug in the extended
+     * part would switch the mode back on despite the skip.
+     */
+    fun skipUntilMillis(p: ScheduleParams, alarm: LocalDateTime? = null): Long {
+        if (p.allDay) return System.currentTimeMillis() + 8 * 3600_000L
+        val now = LocalDateTime.now()
+        return toEpochMillis(currentOrNextWindow(now, p, alarm)?.end ?: nextEnd(now, p))
+    }
 }

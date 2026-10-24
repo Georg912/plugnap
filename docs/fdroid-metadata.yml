@@ -25,14 +25,14 @@ RepoType: git
 Repo: https://github.com/Georg912/plugnap.git
 
 Builds:
-  - versionName: 1.7.1
-    versionCode: 12
-    commit: v1.7.1
+  - versionName: 1.7.2
+    versionCode: 13
+    commit: v1.7.2
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.7.1
-CurrentVersionCode: 12
+CurrentVersion: 1.7.2
+CurrentVersionCode: 13

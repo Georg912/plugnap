@@ -50,6 +50,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prefs: Prefs
     private val handler = Handler(Looper.getMainLooper())
     private var previewRunning = false
+    private val endPreviewTask = Runnable { endPreview() }
+
+    /** Window state as of the last applyConfiguration()/onResume(). */
+    private var wasInWindow = false
 
     private val importSettingsLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -260,7 +264,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toggleSkipTonight() {
-        prefs.skipUntil = if (skipActive()) 0L else Schedule.skipUntilMillis(prefs)
+        prefs.skipUntil = if (skipActive()) 0L
+        else Schedule.skipUntilMillis(prefs, AlarmScheduler.nextAlarmClockTime(this))
         applyConfiguration()
     }
 
@@ -302,12 +307,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        wasInWindow = inWindowNow()
         updateStatus()
     }
 
     override fun onDestroy() {
-        if (previewRunning) ZenRuleManager.setActive(this, false)
         handler.removeCallbacksAndMessages(null)
+        if (previewRunning) endPreview()
         super.onDestroy()
     }
 
@@ -318,16 +324,24 @@ class MainActivity : AppCompatActivity() {
         if (prefs.enabled && ZenRuleManager.hasDndAccess(this)) {
             ZenRuleManager.ensureRule(this)
             AlarmScheduler.reschedule(this)
-            val alarm = AlarmScheduler.nextAlarmClockTime(this)
-            if (Schedule.inWindow(LocalDateTime.now(), prefs, alarm)) {
+            val inWindow = inWindowNow()
+            if (inWindow) {
                 BedtimeService.start(this)
             } else {
                 BedtimeService.stop(this)
+                // This change moved "now" out of the window (end set to
+                // before now, day switched off, alarm-end mode changed …):
+                // end the mode, or it stays on until tomorrow's end alarm.
+                // Only on that transition, so other settings changes don't
+                // kill a manual tile activation outside the window.
+                if (wasInWindow && !previewRunning) ZenRuleManager.setActive(this, false)
             }
+            wasInWindow = inWindow
         } else {
             AlarmScheduler.reschedule(this)
             BedtimeService.stop(this)
             ZenRuleManager.setActive(this, false)
+            wasInWindow = false
         }
         updateStatus()
         // The service activates the rule asynchronously — refresh shortly after.
@@ -556,15 +570,29 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
             return
         }
+        handler.removeCallbacks(endPreviewTask)   // a second tap restarts the 15 s
         previewRunning = true
-        ZenRuleManager.setActive(this, true)
-        handler.postDelayed({
-            ZenRuleManager.setActive(this, false)
-            previewRunning = false
-            updateStatus()
-        }, 15_000)
+        ZenRuleManager.setActive(this, true, userAction = true)
+        handler.postDelayed(endPreviewTask, 15_000)
         updateStatus()
     }
+
+    /**
+     * Ends the preview — but not a real bedtime mode that was (or should
+     * be) running underneath: return to whatever the charging state says.
+     * Decided right here rather than by restarting the service, which can
+     * be refused once the app is in the background.
+     */
+    private fun endPreview() {
+        previewRunning = false
+        val realModeOn = prefs.enabled && inWindowNow() &&
+            BedtimeService.chargingConditionsMet(this)
+        ZenRuleManager.setActive(this, realModeOn)
+        updateStatus()
+    }
+
+    private fun inWindowNow() =
+        Schedule.inWindow(LocalDateTime.now(), prefs, AlarmScheduler.nextAlarmClockTime(this))
 
     private fun openModeSettings() {
         val id = prefs.ruleId ?: ZenRuleManager.ensureRule(this) ?: return
@@ -602,9 +630,8 @@ class MainActivity : AppCompatActivity() {
         )
 
         val charging = getSystemService(BatteryManager::class.java).isCharging
-        val inWindow = Schedule.inWindow(
-            LocalDateTime.now(), prefs, AlarmScheduler.nextAlarmClockTime(this)
-        )
+        val alarm = AlarmScheduler.nextAlarmClockTime(this)
+        val inWindow = Schedule.inWindow(LocalDateTime.now(), prefs, alarm)
         val status = findViewById<TextView>(R.id.textStatus)
         status.text = when {
             !prefs.enabled -> getString(R.string.status_disabled)
@@ -617,15 +644,23 @@ class MainActivity : AppCompatActivity() {
                     Instant.ofEpochMilli(prefs.skipUntil), ZoneId.systemDefault()
                 ).let { fmt(it.hour * 60 + it.minute) }
             )
-            prefs.ruleActive -> getString(R.string.status_active)
+            ZenRuleManager.isActive(this) -> getString(R.string.status_active)
             charging && inWindow -> getString(R.string.status_activating)
             charging -> getString(R.string.status_charging_outside_window)
             else -> getString(
                 R.string.status_waiting,
                 if (prefs.allDay) getString(R.string.status_anytime)
-                else fmt(prefs.windowStart) + "–" + fmt(prefs.windowEnd)
+                else nextWindowLabel(alarm)
             )
         }
+    }
+
+    /** Tonight's (or the next) window as "21:00–07:00", alarm-adjusted. */
+    private fun nextWindowLabel(alarm: LocalDateTime?): String {
+        val w = Schedule.currentOrNextWindow(LocalDateTime.now(), prefs, alarm)
+            ?: return "–"
+        val fmt = { t: LocalDateTime -> String.format(Locale.ROOT, "%02d:%02d", t.hour, t.minute) }
+        return fmt(w.start) + "–" + fmt(w.end)
     }
 
     companion object {

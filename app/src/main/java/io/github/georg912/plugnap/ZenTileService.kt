@@ -26,13 +26,13 @@ class ZenTileService : TileService() {
             startActivityAndCollapse(pi)
             return
         }
-        ZenRuleManager.setActive(this, !Prefs(this).ruleActive)
+        ZenRuleManager.setActive(this, !ZenRuleManager.isActive(this), userAction = true)
         refresh()
     }
 
     private fun refresh() {
         val tile = qsTile ?: return
-        tile.state = if (Prefs(this).ruleActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+        tile.state = if (ZenRuleManager.isActive(this)) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.updateTile()
     }
 }

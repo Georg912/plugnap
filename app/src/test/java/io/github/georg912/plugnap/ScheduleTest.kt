@@ -298,4 +298,43 @@ class ScheduleTest {
         assertNull(Schedule.currentWindow(now, p, alarm = at(22, 7, 0)))  // moved to tomorrow
         assertEquals(at(22, 7, 0), Schedule.nextEffectiveEnd(now, p, null))
     }
+
+    @Test
+    fun `currentOrNextWindow inside an extended night returns it with the alarm end`() =
+        assertEquals(
+            Schedule.Window(at(20, 21, 0), at(21, 8, 0)),
+            Schedule.currentOrNextWindow(
+                at(21, 7, 30), Params(alarmEndMode = AlarmEndMode.EXTEND), at(21, 8, 0)
+            )
+        )
+
+    @Test
+    fun `currentOrNextWindow in the afternoon returns tonight, alarm-adjusted`() =
+        assertEquals(
+            Schedule.Window(at(21, 21, 0), at(22, 8, 0)),
+            Schedule.currentOrNextWindow(
+                at(21, 15, 0), Params(alarmEndMode = AlarmEndMode.EXTEND), at(22, 8, 0)
+            )
+        )
+
+    @Test
+    fun `currentOrNextWindow follows the per-day times, not the simple ones`() {
+        // 2026-07-21 is a Tuesday; only Wednesday night is on
+        val w = Schedule.currentOrNextWindow(
+            at(21, 12, 0),
+            Params(mode = ScheduleMode.PER_DAY, days = onlyDay(DayOfWeek.WEDNESDAY)),
+            null
+        )
+        assertEquals(Schedule.Window(at(22, 21, 0), at(23, 7, 0)), w)
+    }
+
+    @Test
+    fun `currentOrNextWindow is null when every day is off`() =
+        assertNull(
+            Schedule.currentOrNextWindow(
+                at(21, 12, 0),
+                Params(mode = ScheduleMode.PER_DAY, days = DayOfWeek.entries.associateWith { 0 to 0 }),
+                null
+            )
+        )
 }

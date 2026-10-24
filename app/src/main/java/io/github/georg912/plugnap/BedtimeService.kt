@@ -7,12 +7,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.BatteryManager
 import android.os.IBinder
+import android.service.quicksettings.TileService
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -48,6 +50,10 @@ class BedtimeService : Service() {
                 Intent.ACTION_POWER_DISCONNECTED -> {
                     AlarmScheduler.cancelReevaluate(context)
                     val prefs = Prefs(context)
+                    // Our own last-sent condition, NOT the effective state:
+                    // after the user switched the mode off in the system,
+                    // this FALSE is what clears their override, so the next
+                    // plug-in can switch it on again.
                     if (prefs.ruleActive) {
                         val graceMs = prefs.unplugGraceSec * 1000L
                         if (graceMs == 0L) {
@@ -57,6 +63,12 @@ class BedtimeService : Service() {
                         }
                     }
                 }
+                NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED ->
+                    // Mode switched on/off elsewhere (Modes settings, system
+                    // tile): only the displayed state needs refreshing.
+                    TileService.requestListeningState(
+                        context, ComponentName(context, ZenTileService::class.java)
+                    )
                 AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED -> {
                     AlarmScheduler.reschedule(context)
                     // Rescheduling alone is not enough: if the night was
@@ -82,6 +94,7 @@ class BedtimeService : Service() {
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
             addAction(AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED)
+            addAction(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED)
         }
         // NOT_EXPORTED: these are protected system broadcasts, and system
         // senders reach non-exported receivers just fine — free hardening.
@@ -117,26 +130,8 @@ class BedtimeService : Service() {
 
     /** Should the mode be on right now? (charger type, skip, charging state) */
     private fun evaluate() {
-        val prefs = Prefs(this)
-        val skipped = System.currentTimeMillis() < prefs.skipUntil
-        val shouldBeOn = !skipped && currentPlugAllowed(prefs)
-        ZenRuleManager.setActive(this, shouldBeOn)
+        ZenRuleManager.setActive(this, chargingConditionsMet(this))
     }
-
-    /** Is the device currently charging via an allowed charger type? */
-    private fun currentPlugAllowed(prefs: Prefs): Boolean {
-        val plugged = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            ?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0
-        return when {
-            plugged == 0 -> false
-            plugged and (BatteryManager.BATTERY_PLUGGED_AC or BatteryManager.BATTERY_PLUGGED_DOCK) != 0 ->
-                prefs.plugAc
-            plugged and BatteryManager.BATTERY_PLUGGED_USB != 0 -> prefs.plugUsb
-            plugged and BatteryManager.BATTERY_PLUGGED_WIRELESS != 0 -> prefs.plugWireless
-            else -> true
-        }
-    }
-
     override fun onDestroy() {
         // Deliberately NOT cancelling a pending re-evaluate alarm: if the
         // system kills us mid-timer, the alarm restarts the service and the
@@ -173,7 +168,7 @@ class BedtimeService : Service() {
         val text = when {
             System.currentTimeMillis() < prefs.skipUntil ->
                 getString(R.string.notification_skipped)
-            prefs.ruleActive -> getString(R.string.notification_active)
+            ZenRuleManager.isActive(this) -> getString(R.string.notification_active)
             prefs.allDay -> getString(R.string.notification_waiting_allday)
             else -> {
                 // The alarm-adjusted end, not the base one, so an extended
@@ -217,6 +212,22 @@ class BedtimeService : Service() {
     }
 
     companion object {
+        /** Not skipped and charging via an allowed charger type (window not checked). */
+        fun chargingConditionsMet(context: Context): Boolean {
+            val prefs = Prefs(context)
+            if (System.currentTimeMillis() < prefs.skipUntil) return false
+            val plugged = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+                ?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0
+            return when {
+                plugged == 0 -> false
+                plugged and (BatteryManager.BATTERY_PLUGGED_AC or BatteryManager.BATTERY_PLUGGED_DOCK) != 0 ->
+                    prefs.plugAc
+                plugged and BatteryManager.BATTERY_PLUGGED_USB != 0 -> prefs.plugUsb
+                plugged and BatteryManager.BATTERY_PLUGGED_WIRELESS != 0 -> prefs.plugWireless
+                else -> true
+            }
+        }
+
         private const val CHANNEL_ID = "bedtime_watch"
         private const val CHANNEL_HIDDEN = "bedtime_watch_hidden"
         private const val NOTIFICATION_ID = 1

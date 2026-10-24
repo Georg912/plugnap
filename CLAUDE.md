@@ -42,7 +42,7 @@ delay) are doze-safe wakeup alarms (`ACTION_REEVALUATE`), never
 | `MainActivity.kt` | Single-screen settings UI; per-day rows built programmatically |
 | `NoFilterAdapter.kt` | Dropdown adapter — see regression rules below |
 
-Tests: `app/src/test/…/ScheduleTest.kt` (window/alarm math, 34 cases),
+Tests: `app/src/test/…/ScheduleTest.kt` (window/alarm math, 39 cases),
 `DropdownMappingTest.kt`, `PrefsJsonTest.kt` (export/import round-trip) —
 pure JVM, no emulator, run with `./gradlew test`.
 
@@ -106,14 +106,26 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
    on each individual widget. `MainActivityStateTest` guards this
    regression class; a new switch/toggle added without the attribute will
    fail CI instead of shipping the bug again.
-9. **Anything that moves the window end must re-check "are we still
-   inside?"** — not just reschedule the end alarm. `reschedule()` only ever
-   aims at the *next* end; if the change put "now" past the new end (an
-   extended night whose alarm is dismissed/deleted/moved past the cap),
-   the end alarm lands on tomorrow and the mode stays on all day.
-   `BedtimeService.stopIfOutsideWindow()` handles this for
-   `ACTION_NEXT_ALARM_CLOCK_CHANGED`; reproduced and verified on the
-   emulator via DeskClock's `SET_ALARM` / `DISMISS_ALARM` intents.
+9. **Anything that can put "now" outside the window must end the mode,
+   not just reschedule.** `reschedule()` only ever aims at the *next* end,
+   so "now past the new end" lands the end alarm on tomorrow and the mode
+   stays on all day. Covered paths: alarm-clock change
+   (`BedtimeService.stopIfOutsideWindow()`), settings change
+   (`MainActivity.applyConfiguration()`, on the in→out transition only, so
+   a manual tile activation survives unrelated changes), boot after the
+   phone was off across the window end (`BootReceiver`; the zen rule's
+   active state survives a reboot, the alarm doesn't). All reproduced and
+   verified on the emulator (DeskClock `SET_ALARM`/`DISMISS_ALARM`
+   intents, `reboot -p` + cold boot).
+10. **`Prefs.ruleActive` = the condition WE last sent; `ZenRuleManager.isActive()`
+   = what the system actually does.** Display (tile, status, notification)
+   uses `isActive()`. Logic that decides whether to send FALSE uses
+   `ruleActive`: after the user switches the mode off in system settings,
+   the system keeps a "deactivated" override that ignores repeated TRUEs
+   and is only cleared by our FALSE — skipping that FALSE (because the
+   effective state already looks off) means the next plug-in never
+   reactivates. Explicit taps (tile, preview) pass `userAction = true`,
+   which sends FALSE→TRUE to get past the override.
 
 ## Language & release conventions
 
