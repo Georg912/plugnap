@@ -103,7 +103,7 @@ class Prefs(context: Context) : ScheduleParams {
 
     /** Hard cap for EXTEND/FOLLOW: alarms further past the window end are ignored. */
     override var maxExtendMinutes: Int
-        get() = sp.getInt("max_extend_min", 120)
+        get() = sp.getInt("max_extend_min", 240)
         set(v) = sp.edit().putInt("max_extend_min", v).apply()
 
     /** "Skip tonight": don't activate until this instant (epoch millis) */

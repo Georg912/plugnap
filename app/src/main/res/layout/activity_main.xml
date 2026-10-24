@@ -314,21 +314,38 @@
                 android:text="@string/alarm_follow" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilMaxExtend"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <LinearLayout
+            android:id="@+id/rowMaxExtend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="@string/max_extend_label">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                android:id="@+id/dropdownMaxExtend"
-                android:saveEnabled="false"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilMaxExtend"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/max_extend_label">
+
+                <AutoCompleteTextView
+                    android:id="@+id/dropdownMaxExtend"
+                    android:saveEnabled="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/btnMaxExtendInfo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/max_extend_info_title"
+                android:src="@drawable/ic_info" />
+        </LinearLayout>
 
         <!-- Charger types -->
         <com.google.android.material.divider.MaterialDivider style="@style/Divider" />

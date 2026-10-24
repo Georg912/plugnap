@@ -161,11 +161,10 @@ class MainActivity : AppCompatActivity() {
             }
         )
         findViewById<View>(R.id.btnAlarmInfo).setOnClickListener {
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.alarm_info_title)
-                .setMessage(getText(R.string.alarm_info_text))
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+            showInfo(R.string.alarm_info_title, R.string.alarm_info_text)
+        }
+        findViewById<View>(R.id.btnMaxExtendInfo).setOnClickListener {
+            showInfo(R.string.max_extend_info_title, R.string.max_extend_info_text)
         }
         endAtAlarm.setOnCheckedChangeListener { _, checked ->
             prefs.alarmEndMode =
@@ -455,7 +454,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.containerPerDay).isVisible = mode == ScheduleMode.PER_DAY
         val alarmMode = prefs.alarmEndMode
         findViewById<View>(R.id.toggleAlarmMode).isVisible = alarmMode != AlarmEndMode.OFF
-        findViewById<View>(R.id.tilMaxExtend).isVisible =
+        findViewById<View>(R.id.rowMaxExtend).isVisible =
             alarmMode == AlarmEndMode.EXTEND || alarmMode == AlarmEndMode.FOLLOW
     }
 
@@ -558,6 +557,14 @@ class MainActivity : AppCompatActivity() {
             }
             container.addView(row)
         }
+    }
+
+    private fun showInfo(title: Int, text: Int) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(getText(text))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun pickTime(minuteOfDay: Int, onPicked: (Int) -> Unit) {
