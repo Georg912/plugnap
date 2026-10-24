@@ -2,6 +2,7 @@ package io.github.georg912.plugnap
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.DayOfWeek
@@ -282,4 +283,19 @@ class ScheduleTest {
                 at(21, 7, 30), Params(alarmEndMode = AlarmEndMode.EXTEND), at(21, 8, 0)
             )
         )
+
+    /**
+     * Regression guard for the alarm-change bug: inside an extended night,
+     * removing the alarm puts "now" outside every window. BedtimeService
+     * relies on currentWindow() == null here to end the mode immediately;
+     * nextEffectiveEnd() alone would only point at tomorrow's base end.
+     */
+    @Test
+    fun `dismissing the alarm inside an extended night leaves the window`() {
+        val p = Params(alarmEndMode = AlarmEndMode.EXTEND)
+        val now = at(21, 7, 30)
+        assertNull(Schedule.currentWindow(now, p, alarm = null))
+        assertNull(Schedule.currentWindow(now, p, alarm = at(22, 7, 0)))  // moved to tomorrow
+        assertEquals(at(22, 7, 0), Schedule.nextEffectiveEnd(now, p, null))
+    }
 }

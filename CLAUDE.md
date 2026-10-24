@@ -106,6 +106,14 @@ Requires a full JDK 17+ (not a JRE) and Android SDK Platform 35.
    on each individual widget. `MainActivityStateTest` guards this
    regression class; a new switch/toggle added without the attribute will
    fail CI instead of shipping the bug again.
+9. **Anything that moves the window end must re-check "are we still
+   inside?"** — not just reschedule the end alarm. `reschedule()` only ever
+   aims at the *next* end; if the change put "now" past the new end (an
+   extended night whose alarm is dismissed/deleted/moved past the cap),
+   the end alarm lands on tomorrow and the mode stays on all day.
+   `BedtimeService.stopIfOutsideWindow()` handles this for
+   `ACTION_NEXT_ALARM_CLOCK_CHANGED`; reproduced and verified on the
+   emulator via DeskClock's `SET_ALARM` / `DISMISS_ALARM` intents.
 
 ## Language & release conventions
 

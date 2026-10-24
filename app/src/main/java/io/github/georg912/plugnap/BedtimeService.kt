@@ -57,8 +57,15 @@ class BedtimeService : Service() {
                         }
                     }
                 }
-                AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED ->
+                AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED -> {
                     AlarmScheduler.reschedule(context)
+                    // Rescheduling alone is not enough: if the night was
+                    // extended past its base end and the alarm then gets
+                    // dismissed, deleted or moved beyond the cap, "now" is
+                    // already past the new end — and reschedule() would only
+                    // aim the end alarm at tomorrow, leaving the mode on all day.
+                    if (stopIfOutsideWindow()) return
+                }
             }
             updateNotification()
         }
@@ -90,16 +97,22 @@ class BedtimeService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        val alarm = AlarmScheduler.nextAlarmClockTime(this)
-        if (!prefs.allDay && Schedule.currentWindow(LocalDateTime.now(), prefs, alarm) == null) {
-            // Started outside the window (boot race etc.) -> shut down
-            ZenRuleManager.setActive(this, false)
-            stopSelf()
-            return START_NOT_STICKY
-        }
+        // Started outside the window (boot race etc.) -> shut down
+        if (stopIfOutsideWindow()) return START_NOT_STICKY
         evaluate()
         updateNotification()
         return START_STICKY
+    }
+
+    /** Outside the (alarm-adjusted) window: turn the mode off and stop. */
+    private fun stopIfOutsideWindow(): Boolean {
+        val prefs = Prefs(this)
+        if (prefs.allDay) return false
+        val alarm = AlarmScheduler.nextAlarmClockTime(this)
+        if (Schedule.currentWindow(LocalDateTime.now(), prefs, alarm) != null) return false
+        ZenRuleManager.setActive(this, false)
+        stopSelf()
+        return true
     }
 
     /** Should the mode be on right now? (charger type, skip, charging state) */
@@ -162,7 +175,17 @@ class BedtimeService : Service() {
                 getString(R.string.notification_skipped)
             prefs.ruleActive -> getString(R.string.notification_active)
             prefs.allDay -> getString(R.string.notification_waiting_allday)
-            else -> getString(R.string.notification_waiting, fmt(prefs.windowEnd))
+            else -> {
+                // The alarm-adjusted end, not the base one, so an extended
+                // or shortened night shows the time it really ends.
+                val end = Schedule.currentWindow(
+                    LocalDateTime.now(), prefs, AlarmScheduler.nextAlarmClockTime(this)
+                )?.end
+                getString(
+                    R.string.notification_waiting,
+                    end?.let { fmt(it.hour * 60 + it.minute) } ?: fmt(prefs.windowEnd)
+                )
+            }
         }
         val contentIntent = PendingIntent.getActivity(
             this, 0, Intent(this, MainActivity::class.java),
