@@ -1,0 +1,3 @@
+• Neue ⓘ-Knöpfe erklären die Wecker-Optionen (Nur früher, Nur später, …) und die Grenze „Höchstens verlängern“ mit Beispielen.
+• „Höchstens verlängern“ steht jetzt standardmäßig auf 4 Stunden (vorher 2). Ein selbst gewählter Wert bleibt erhalten.
+• Der Knopf „Wochenende“ wird nicht mehr abgeschnitten.

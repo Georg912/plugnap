@@ -162,6 +162,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/mode_simple" />
             <Button
                 android:id="@+id/btnModeWeekend"
@@ -170,6 +172,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/mode_weekend" />
             <Button
                 android:id="@+id/btnModePerDay"
@@ -178,6 +182,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/mode_per_day" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
